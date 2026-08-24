@@ -51,7 +51,7 @@ druzyny_pge = {
 
 druzyny_metalkas = {
     "Energa Wybrzeże Gdańsk": {
-        "seniorzy": ["Jacob Thorssell", "Timo Lahti", "Tim Sørensen", "Krystian Pieszczek", "Josh Pickering"],
+        "seniorzy": ["Jacob Thorssell", "Timo Lahti", "Tim Sørensen", "Krystian Pieszczek",],
         "u24": ["Mateusz Bartkowiak", "Miłosz Wysocki", "Casper Henriksson"],
         "juniorzy": ["Jan Przanowski", "Eryk Kamiński", "Niklas Holm Jakobsen", "Kacper Warduliński", "Mikołaj Krok", "Jakub Redzimski", "Jakub Malina"]
     },
@@ -216,7 +216,7 @@ reczne_ovr = {
     "Benjamin Basso": 81, "Wiktor Jasiński": 79, "Norbert Kościuch": 78, "Matias Nielsen": 78, "Adrian Cyfer": 76,
     "Wiliam Drejer": 70, "Kacper Teska": 74, "Emil Maroszek": 66, "Tobiasz Jakub Musielak": 69, "Błażej Wypior": 60,
     "Ryan Douglas": 87, "Dimitri Bergé": 81, "Niels Kristian Iversen": 78, "Bartosz Smektała": 80, "Kacper Pludra": 75,
-    "Kamil Witkowski": 73, "Jan Kvech": 86, "Nicolai Klindt": 70, "Patryk Wojdyło": 82,
+    "Kamil Witkowski": 73, "Jan Kvech": 86, "Nicolai Klindt": 84, "Patryk Wojdyło": 82,
     "Jakub Jamróg": 80, "Jesper Knudsen": 74, "Kacper Tkocz": 71, "Paweł Wyczyszczok": 67, "Roch Wujec": 60, "Philip Helstrom Bangs": 79, "Adrian Gała": 77, 
     "Antoni Mencel": 75, "Kyle Howarth": 77, "Krystian Pieszczek":77,
 }
@@ -336,7 +336,7 @@ program_zawodow = [
     {"bieg": 4,  "A": 13, "B": 5,  "C": 14, "D": 6,  "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
     {"bieg": 5,  "A": 3,  "B": 9,  "C": 4,  "D": 10, "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
     {"bieg": 6,  "A": 11, "B": 1,  "C": 12, "D": 7,  "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-    {"bieg": 7,  "A": 2,  "B": 13, "C": 5,  "D": 9,  "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
+    {"bieg": 7,  "A": 2,  "B": 13, "C": 5,  "D": 15, "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
     {"bieg": 8,  "A": 10, "B": 4,  "C": 11, "D": 6,  "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
     {"bieg": 9,  "A": 1,  "B": 9,  "C": 2,  "D": 12, "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
     {"bieg": 10, "A": 14, "B": 3,  "C": 13, "D": 5,  "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
