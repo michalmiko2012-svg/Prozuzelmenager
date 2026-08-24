@@ -40,10 +40,10 @@ druzyny_pge = {
     "Gezet Stal Gorzów": {
         "seniorzy": ["Anders Thomsen", "Jack Holder", "Paweł Przedpełski", "Marcel Szymko", "Wiktor Trofimov", "Timo Lahti", "Adrian Gała"],
         "u24": ["Mathias Pollestad"],
-        "juniorzy": ["Oskar Paluch", "Adam Bednar", "Hubert Jabłoński", "Denis Andrzejczak", "Dominik Baryłka", "Oskar Chatłas", "Igor Kordun", "Sebastian Mayland", "Kewin Nycz", "Andreas Olsen"]
+        "juniorzy": ["Oskar Paluch", "Hubert Jabłoński", "Denis Andrzejczak", "Dominik Baryłka", "Oskar Chatłas", "Igor Kordun", "Sebastian Mayland", "Kewin Nycz", "Andreas Olsen", "Adam Bednar"]
     },
     "Fogo Unia Leszno": {
-        "seniorzy": ["Janusz Kołodziej", "Piotr Pawlicki", "Grzegorz Zengota", "Ben Cook", "Andreas Johansson"],
+        "seniorzy": ["Janusz Kołodziej", "Piotr Pawlicki", "Grzegorz Zengota", "Ben Cook", "Andreas Johansson", "Janusz Kołodziej"],
         "u24": ["Keynan Rew", "Janusz Kołodziej"],
         "juniorzy": ["Nazar Parnicki", "Kacper Mania", "Marcel Juskowiak", "Krystian Buczyński", "Filip Gano", "Emil Konieczny", "Maksymilian Kostera", "Krzysztof Skorczyk", "Kuba Wojtyńka", "Jakub Żurek"]
     }
@@ -56,9 +56,9 @@ druzyny_metalkas = {
         "juniorzy": ["Jan Przanowski", "Eryk Kamiński", "Niklas Holm Jakobsen", "Kacper Warduliński", "Mikołaj Krok", "Jakub Redzimski", "Jakub Malina"]
     },
     "Abramczyk Polonia Bydgoszcz": {
-        "seniorzy": ["Szymon Woźniak", "Kai Huckenbeck", "Aleksandr Łoktajew", "Krzysztof Buczkowski", "Tom Brennan", "Janusz Kołodziej"],
+        "seniorzy": ["Szymon Woźniak", "Kai Huckenbeck", "Aleksandr Łoktajew", "Krzysztof Buczkowski", "Tom Brennan"],
         "u24": [],
-        "juniorzy": ["Maksymilian Pawełczak", "Kacper Andrzejewski", "Adam Putkowski", "Jan Rompkowski"]
+        "juniorzy": ["Maksymilian Pawełczak", "Kacper Andrzejewski", "Adam Putkowski", "Jan Rompkowski", "Wiktor Przyjesmki"]
     },
     "H.Skrzydlewska Orzeł Łódź": {
         "seniorzy": ["Marcin Nowak", "Oliver Berntzon", "Zach Cook", "Szymon Szlauderbach"],
@@ -318,6 +318,26 @@ wybrany_gospodarz = st.sidebar.selectbox("🏠 Gospodarz (Czerwony/Niebieski)", 
 wybrany_gosc = st.sidebar.selectbox("✈️ Gość (Biały/Żółty)", kluby_lista, index=kluby_lista.index(st.session_state.gosc_bieżący), key="gosc_bieżący")
 wybrana_pogoda = st.sidebar.selectbox("🌤️ Warunki atmosferyczne:", ["☀️ Słonecznie i ciepło", "⛅ Lekkie zachmurzenie", "🌬️ Wietrznie", "🌧️ Deszcz (Mżawka)", "🌩️ Burza / Ulewa"])
 
+# Zmiana drużyn rozpoczyna nowy mecz, żeby nie przenosić wyniku, startów i kontuzji
+if (
+    st.session_state.get("mecz_gospodarz") != wybrany_gospodarz
+    or st.session_state.get("mecz_gosc") != wybrany_gosc
+):
+    st.session_state.mecz_gospodarz = wybrany_gospodarz
+    st.session_state.mecz_gosc = wybrany_gosc
+    st.session_state.current_heat = 0
+    st.session_state.score_gosp = 0
+    st.session_state.score_gosc = 0
+    st.session_state.match_history = []
+    st.session_state.starts_count = {nr: 0 for nr in range(1, 17)}
+    st.session_state.rider_heats = {nr: [] for nr in range(1, 17)}
+    st.session_state.rider_bonuses = {nr: 0 for nr in range(1, 17)}
+    st.session_state.kontuzjowani = set()
+    st.session_state.mecz_przerwany = False
+    st.session_state.decyzja_o_przerwaniu_podjeta = False
+    st.session_state.baza_zawodnikow = generuj_statystyki_zawodnikow()
+    st.rerun()
+
 tab_kadry, tab_taktyka, tab_mecz = st.tabs(["👥 1. Wybór Drużyn i Kadry", "📣 2. Odprawa Taktyczna", "🏎️ 3. Centrum Meczowe"])
 
 kadra_gosp_klub = wszystkie_druzyny[wybrany_gospodarz]["seniorzy"] + wszystkie_druzyny[wybrany_gospodarz]["u24"] + wszystkie_druzyny[wybrany_gospodarz]["juniorzy"]
@@ -514,12 +534,21 @@ with tab_mecz:
                 elif s.startswith("1"): s_pkt += 1
             return s_pkt + st.session_state.rider_bonuses.get(nr, 0)
 
-        def buduj_opcje_gosp(prog_nr, wykluczone_numery=[]):
+        def buduj_opcje_gosp(prog_nr, wykluczone_numery=None):
+            if wykluczone_numery is None:
+                wykluczone_numery = []
             opcje = []
             if nr_b in [14, 15]:
-                dostępni = [nr for nr in range(1, 9) if nr not in st.session_state.kontuzjowani and st.session_state.starts_count[nr] < 5 and nr not in wykluczone_numery]
-                dostępni.sort(key=lambda nr: get_pkt_sum(nr), reverse=True)
-                return dostępni if dostępni else [prog_nr]
+                dostępni = [
+                    nr for nr in range(1, 9)
+                    if nr not in st.session_state.kontuzjowani
+                    and st.session_state.starts_count[nr] < 5
+                    and nr not in wykluczone_numery
+                ]
+                if prog_nr in dostępni:
+                    dostępni.remove(prog_nr)
+                    dostępni.insert(0, prog_nr)
+                return dostępni
 
             if nr_b == 2:
                 juniorzy = [6, 7, 8]
@@ -552,12 +581,21 @@ with tab_mecz:
             res = [nr for nr in opcje if nr not in wykluczone_numery]
             return res if res else [prog_nr]
 
-        def buduj_opcje_gosc(prog_nr, wykluczone_numery=[]):
+        def buduj_opcje_gosc(prog_nr, wykluczone_numery=None):
+            if wykluczone_numery is None:
+                wykluczone_numery = []
             opcje = []
             if nr_b in [14, 15]:
-                dostępni = [nr for nr in range(9, 17) if nr not in st.session_state.kontuzjowani and st.session_state.starts_count[nr] < 5 and nr not in wykluczone_numery]
-                dostępni.sort(key=lambda nr: get_pkt_sum(nr), reverse=True)
-                return dostępni if dostępni else [prog_nr]
+                dostępni = [
+                    nr for nr in range(9, 17)
+                    if nr not in st.session_state.kontuzjowani
+                    and st.session_state.starts_count[nr] < 5
+                    and nr not in wykluczone_numery
+                ]
+                if prog_nr in dostępni:
+                    dostępni.remove(prog_nr)
+                    dostępni.insert(0, prog_nr)
+                return dostępni
 
             if nr_b == 2:
                 juniorzy = [14, 15, 16]
@@ -626,13 +664,39 @@ with tab_mecz:
         with col_btn1:
             if st.button("🏁 Jedź Bieg"):
                 uczestnicy = list(wybrani_zawodnicy.values())
-                ukończyli = []
                 zdarzenia = []
                 
                 for u in uczestnicy:
                     zaw = st.session_state.baza_zawodnikow[u['nazwisko']]
                     sila = (zaw['start'] * waga_startu) + (zaw['dystans'] * waga_dystansu) + zaw['forma']
-                    sila += random.uniform(-5.0, 5.0)
+                    losowy_wplyw = 5.0
+
+                    styl = st.session_state.get(f"styl_jazdy_{u['druzyna']}", "Standardowe nastawienie")
+                    if "Agresywne" in styl:
+                        sila += 1.0
+                        losowy_wplyw = 6.0
+                    elif "Defensywne" in styl:
+                        sila -= 0.5
+                        losowy_wplyw = 3.5
+
+                    # Pogoda wpływa na charakterystykę biegu. Burza dodatkowo zatrzymuje mecz po 8. biegu.
+                    waga_startu_bieżąca = waga_startu
+                    waga_dystansu_bieżąca = waga_dystansu
+                    kara_pogodowa = 0.0
+                    if "Wietrznie" in wybrana_pogoda:
+                        kara_pogodowa = 1.0
+                        losowy_wplyw += 1.0
+                    elif "Deszcz" in wybrana_pogoda:
+                        waga_startu_bieżąca *= 0.9
+                        waga_dystansu_bieżąca *= 1.1
+                        kara_pogodowa = 1.0
+                    elif "Burza" in wybrana_pogoda:
+                        waga_startu_bieżąca *= 0.85
+                        waga_dystansu_bieżąca *= 1.05
+                        kara_pogodowa = 2.0
+
+                    sila = (zaw['start'] * waga_startu_bieżąca) + (zaw['dystans'] * waga_dystansu_bieżąca) + zaw['forma'] - kara_pogodowa
+                    sila += random.uniform(-losowy_wplyw, losowy_wplyw)
                     
                     takt_sprzet = st.session_state.get(f"sprzet_{u['druzyna']}", "")
                     szansa_defekt = 0.02
@@ -661,41 +725,50 @@ with tab_mecz:
                     else:
                         u['wynik_litera'] = None
                         
+                # Najpierw klasyfikujemy tylko zawodników, którzy ukończyli bieg.
+                # Dzięki temu D/U/W nie zabiera 3/2/1 punktu pozostałym zawodnikom.
                 uczestnicy.sort(key=lambda x: x['sila'], reverse=True)
+                sklasyfikowani = [u for u in uczestnicy if not u['wynik_litera']]
+                niesklasyfikowani = [u for u in uczestnicy if u['wynik_litera']]
                 
                 punkty = [3, 2, 1, 0]
                 wyniki_biegu_gosp = 0
                 wyniki_biegu_gosc = 0
                 
-                for i, u in enumerate(uczestnicy):
+                # Start jest liczony każdemu zawodnikowi, niezależnie od wyniku.
+                for u in uczestnicy:
                     st.session_state.starts_count[u['nr']] += 1
                     
-                    if u['wynik_litera']:
-                        pkt = 0
-                        zapis = u['wynik_litera']
-                    else:
-                        pkt = punkty[i]
-                        bonus = False
-                        if pkt == 2 and uczestnicy[0]['druzyna'] == u['druzyna']:
-                            bonus = True
-                        elif pkt == 1 and (uczestnicy[0]['druzyna'] == u['druzyna'] or uczestnicy[1]['druzyna'] == u['druzyna']):
-                            bonus = True
-                        
-                        zapis = f"{pkt}*" if bonus else str(pkt)
-                        if bonus:
-                            st.session_state.rider_bonuses[u['nr']] += 1
-                            
+                # Punkty przyznajemy wyłącznie sklasyfikowanym.
+                for i, u in enumerate(sklasyfikowani):
+                    pkt = punkty[i] if i < len(punkty) else 0
+                    bonus = False
+                    if pkt == 2 and sklasyfikowani and sklasyfikowani[0]['druzyna'] == u['druzyna']:
+                        bonus = True
+                    elif pkt == 1 and len(sklasyfikowani) >= 2 and (
+                        sklasyfikowani[0]['druzyna'] == u['druzyna']
+                        or sklasyfikowani[1]['druzyna'] == u['druzyna']
+                    ):
+                        bonus = True
+                    
+                    zapis = f"{pkt}*" if bonus else str(pkt)
+                    if bonus:
+                        st.session_state.rider_bonuses[u['nr']] += 1
+                    
                     st.session_state.rider_heats[u['nr']].append(zapis)
                     
                     if u['druzyna'] == "gosp":
                         wyniki_biegu_gosp += pkt
                     else:
                         wyniki_biegu_gosc += pkt
+
+                # D/U/W zapisujemy jako 0 pkt, ale nie wpływają na kolejność punktową.
+                for u in niesklasyfikowani:
+                    st.session_state.rider_heats[u['nr']].append(u['wynik_litera'])
                         
                 st.session_state.score_gosp += wyniki_biegu_gosp
                 st.session_state.score_gosc += wyniki_biegu_gosc
                 
-                sklasyfikowani = [u for u in uczestnicy if not u['wynik_litera']]
                 komentarz = generuj_komentarz_sf(sklasyfikowani, zdarzenia)
                 
                 st.session_state.match_history.append({
