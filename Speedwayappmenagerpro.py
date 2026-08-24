@@ -81,7 +81,7 @@ druzyny_metalkas = {
         "juniorzy": ["Filip Seniuk", "Marcel Kowolik", "Nikodem Mikołajczyk", "Nikodem Łuczak", "Tobiasz Potasznik", "Gracjan Szostak"]
     },
     "Polonia Piła": {
-        "seniorzy": ["Wiktor Jasiński", "Adrian Cyfer", "Norbert Kościuch", "Matias Nielsen", "Kyle Howarth"],
+        "seniorzy": ["Wiktor Jasiński", "Adrian Cyfer", "Norbert Kościuch", "Matias Nielsen", "Kyle Howarth", "Mikkel Sørensen"],
         "u24": ["Benjamin Basso", "Wiliam Drejer"],
         "juniorzy": ["Emil Maroszek", "Tobiasz Jakub Musielak", "Kacper Teska", "Krystian Buczyński", "Błażej Wypior", "Mateo Rossi"]
     },
@@ -91,7 +91,7 @@ druzyny_metalkas = {
         "juniorzy": ["Kacper Teska", "Kamil Witkowski", "Mateusz Latała", "Antoni Mencel", "Cooper Rushen"]
     },
     "INNPRO ROW Rybnik": {
-        "seniorzy": ["Jan Kvech", "Nicolai Klindt", "Patryk Wojdyło", "Jakub Jamróg", "Mikkel Sørensen"],
+        "seniorzy": ["Jan Kvech", "Nicolai Klindt", "Patryk Wojdyło", "Jakub Jamróg"],
         "u24": ["Jesper Knudsen"],
         "juniorzy": ["Jakub Żurek", "Kacper Tkocz", "Paweł Wyczyszczok", "Roch Wujec"]
     }
