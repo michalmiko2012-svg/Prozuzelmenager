@@ -25,7 +25,7 @@ druzyny_pge = {
     "Bayersystem GKM Grudziądz": {
         "seniorzy": ["Max Fricke", "Maksym Drabik", "Wadim Tarasienko", "Michael Jepsen Jensen"],
         "u24": ["Kacper Łobodziński"],
-        "juniorzy": ["Kevin Małkiewicz", "Bastian Pedersen", "Jan Przanowski", "Beau Bailey", "Kevin Iwański-Helt", "Damian Miller", "Kacper Szarszewski"]
+        "juniorzy": ["Kevin Małkiewicz", "Bastian Pedersen", "Jan Przanowski", "Beau Bailey", "Kevin Iwański-Helt", "Damian Miller", "Kacper Szarszewski", "Oliver Nielsen"]
     },
     "Stelmet Falubaz Zielona Góra": {
         "seniorzy": ["Leon Madsen", "Dominik Kubera", "Andrzej Lebiediew", "Przemysław Pawlicki"],
@@ -43,7 +43,7 @@ druzyny_pge = {
         "juniorzy": ["Oskar Paluch", "Adam Bednar", "Hubert Jabłoński", "Denis Andrzejczak", "Dominik Baryłka", "Oskar Chatłas", "Igor Kordun", "Sebastian Mayland", "Kewin Nycz", "Andreas Olsen"]
     },
     "Fogo Unia Leszno": {
-        "seniorzy": ["Janusz Kołodziej", "Piotr Pawlicki", "Grzegorz Zengota", "Ben Cook"],
+        "seniorzy": ["Janusz Kołodziej", "Piotr Pawlicki", "Grzegorz Zengota", "Ben Cook", "Andreas Johansson"],
         "u24": ["Keynan Rew", "Janusz Kołodziej"],
         "juniorzy": ["Nazar Parnicki", "Kacper Mania", "Marcel Juskowiak", "Krystian Buczyński", "Filip Gano", "Emil Konieczny", "Maksymilian Kostera", "Krzysztof Skorczyk", "Kuba Wojtyńka", "Jakub Żurek"]
     }
@@ -77,13 +77,13 @@ druzyny_metalkas = {
     },
     "Moonfin Magnus Ostrów Wlkp.": {
         "seniorzy": ["Tai Woffinden", "Chris Holder", "Gleb Czugunow", "Frederik Jakobsen", "Krystian Pieszczek"],
-        "u24": ["Jakub Krawczyk"],
+        "u24": ["Jakub Krawczyk", "Kacper Wierzbicki"],
         "juniorzy": ["Filip Seniuk", "Marcel Kowolik", "Nikodem Mikołajczyk", "Nikodem Łuczak", "Tobiasz Potasznik", "Gracjan Szostak"]
     },
     "Polonia Piła": {
         "seniorzy": ["Wiktor Jasiński", "Adrian Cyfer", "Norbert Kościuch", "Matias Nielsen", "Kyle Howarth"],
         "u24": ["Benjamin Basso", "Wiliam Drejer"],
-        "juniorzy": ["Emil Maroszek", "Tobiasz Jakub Musielak", "Kacper Teska", "Krystian Buczyński", "Błażej Wypior"]
+        "juniorzy": ["Emil Maroszek", "Tobiasz Jakub Musielak", "Kacper Teska", "Krystian Buczyński", "Błażej Wypior", "Mateo Rossi"]
     },
     "Hunters PSŻ Poznań": {
         "seniorzy": ["Ryan Douglas", "Dimitri Bergé", "Niels Kristian Iversen", "Bartosz Smektała"],
@@ -91,7 +91,7 @@ druzyny_metalkas = {
         "juniorzy": ["Kacper Teska", "Kamil Witkowski", "Mateusz Latała", "Antoni Mencel", "Cooper Rushen"]
     },
     "INNPRO ROW Rybnik": {
-        "seniorzy": ["Jan Kvech", "Nicolai Klindt", "Patryk Wojdyło", "Jakub Jamróg"],
+        "seniorzy": ["Jan Kvech", "Nicolai Klindt", "Patryk Wojdyło", "Jakub Jamróg", "Mikkel Sørensen"],
         "u24": ["Jesper Knudsen"],
         "juniorzy": ["Jakub Żurek", "Kacper Tkocz", "Paweł Wyczyszczok", "Roch Wujec"]
     }
@@ -218,7 +218,8 @@ reczne_ovr = {
     "Ryan Douglas": 87, "Dimitri Bergé": 81, "Niels Kristian Iversen": 78, "Bartosz Smektała": 80, "Kacper Pludra": 75,
     "Kamil Witkowski": 73, "Jan Kvech": 86, "Nicolai Klindt": 84, "Patryk Wojdyło": 82,
     "Jakub Jamróg": 80, "Jesper Knudsen": 74, "Kacper Tkocz": 71, "Paweł Wyczyszczok": 67, "Roch Wujec": 60, "Philip Helstrom Bangs": 79, "Adrian Gała": 77, 
-    "Antoni Mencel": 75, "Kyle Howarth": 77, "Krystian Pieszczek":77,
+    "Antoni Mencel": 75, "Kyle Howarth": 77, "Krystian Pieszczek": 77, "Kacper Wierzbicki": 84, "Mikkel Sørensen": 81, "Andreas Johansson": 83, "Mateo Rossi": 67,
+    "Oliver Nielsen": 72
 }
 
 def oblicz_ovr_ze_sredniej(nazwisko):
