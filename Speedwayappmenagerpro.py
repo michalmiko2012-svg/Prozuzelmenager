@@ -638,7 +638,7 @@ with tab_mecz:
                     szansa_defekt = 0.02
                     if "Ekstra Mocny" in takt_sprzet:
                         sila += 2.0
-                        szansa_defekt = 0.08
+                        szansa_defekt = 0.04
                         
                     u['sila'] = sila
                     
