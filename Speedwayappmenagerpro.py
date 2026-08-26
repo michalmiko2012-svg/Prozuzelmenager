@@ -2418,7 +2418,7 @@ else:
         st.session_state.swc_pogoda = swc_pogoda
 
 
-   # ========================================================
+# ========================================================
 # NAZWY REPREZENTACJI SWC
 # ========================================================
 
@@ -2430,7 +2430,6 @@ if "swc_reprezentacje" not in st.session_state:
         4: ""
     }
 
-
 st.subheader("🌍 Reprezentacje")
 
 rep_cols = st.columns(4)
@@ -2439,24 +2438,14 @@ for rep in range(1, 5):
 
     with rep_cols[rep - 1]:
 
-        klucz = f"swc_rep_name_{rep}"
-
-        if klucz not in st.session_state:
-            st.session_state[klucz] = (
-                st.session_state.swc_reprezentacje.get(rep, "")
-            )
-
-        st.text_input(
+        wartosc = st.text_input(
             f"Reprezentacja {rep}",
-            key=klucz,
-            placeholder="Wpisz dowolny kraj"
+            value=st.session_state.swc_reprezentacje.get(rep, ""),
+            key=f"swc_country_name_{rep}",
+            placeholder="Wpisz nazwę dowolnego państwa"
         )
 
-        st.session_state.swc_reprezentacje[rep] = (
-            st.session_state[klucz].strip()
-        )
-
-
+        st.session_state.swc_reprezentacje[rep] = wartosc.strip()
     # --------------------------------------------------------
     # NAZWY
     # --------------------------------------------------------
