@@ -244,6 +244,18 @@ program_zawodow = [
 # FUNKCJE WSPÓLNE
 # ============================================================
 
+def pobierz_zawodnika(nr, gospodarze=True):
+    if gospodarze:
+        return st.session_state.sklad_gospodarze.get(nr, "")
+    return st.session_state.sklad_goscie.get(nr, "")
+
+
+def pobierz_ovr(nr, gospodarze=True):
+    if gospodarze:
+        return st.session_state.sklad_gospodarze_ovr.get(nr, 60)
+    return st.session_state.sklad_goscie_ovr.get(nr, 60)
+
+
 def losuj_statystyki_ovr(ovr):
     odchylenie = random.randint(-2, 2)
 
@@ -265,9 +277,11 @@ def sila_zawodnika(
     if tryb_toru == "twardy":
         waga_startu = 0.8
         waga_dystansu = 0.2
+
     elif tryb_toru == "przyczepny":
         waga_startu = 0.3
         waga_dystansu = 0.7
+
     else:
         waga_startu = 0.5
         waga_dystansu = 0.5
@@ -300,6 +314,7 @@ def sila_zawodnika(
 
 
 def komentarz_biegu(uczestnicy, zdarzenia):
+
     if zdarzenia:
         tekst = " ".join(zdarzenia)
 
@@ -379,7 +394,7 @@ def komentarz_biegu(uczestnicy, zdarzenia):
 
 
 # ============================================================
-# INICJALIZACJA MECZU LIGOWEGO
+# RESET MECZU LIGOWEGO
 # ============================================================
 
 def reset_ligi():
@@ -464,12 +479,13 @@ inicjalizuj_lige()
 
 
 # ============================================================
-# RESET INDYWIDUALNYCH
+# RESET ZAWODÓW INDYWIDUALNYCH
 # ============================================================
 
 def reset_indywidualne():
 
     st.session_state.ind_current_heat = 0
+
     st.session_state.ind_history = []
 
     st.session_state.ind_points = {
@@ -481,6 +497,7 @@ def reset_indywidualne():
     }
 
     st.session_state.ind_finished = False
+
     st.session_state.ind_final_result = []
 
 
@@ -524,6 +541,7 @@ def reset_swc():
     }
 
     st.session_state.swc_finished = False
+
     st.session_state.swc_winner = None
 
 
@@ -542,6 +560,7 @@ for bieg in range(1, 21):
     obsada = {}
 
     for rep in range(1, 5):
+
         obsada[rep] = (
             ((bieg - 1 + rep - 1) % 4) + 1
         )
@@ -565,12 +584,14 @@ tryb = st.sidebar.radio(
 
 
 # ============================================================
-# TRYB LIGOWY
+# TRYB MECZU LIGOWEGO
 # ============================================================
 
 if tryb == "🏟️ Mecz ligowy":
 
-    st.sidebar.header("⚙️ Konfiguracja Meczu")
+    st.sidebar.header(
+        "⚙️ Konfiguracja Meczu"
+    )
 
     wybrany_gospodarz = st.sidebar.selectbox(
         "🏠 Gospodarz",
@@ -603,25 +624,45 @@ if tryb == "🏟️ Mecz ligowy":
             use_container_width=True,
             key="liga_losuj_pogode"
         ):
-            st.session_state.pogoda_ligowa = losuj_pogode()
+
+            st.session_state.pogoda_ligowa = (
+                losuj_pogode()
+            )
+
             st.rerun()
 
-        wybrana_pogoda = st.session_state.pogoda_ligowa
+        wybrana_pogoda = (
+            st.session_state.pogoda_ligowa
+        )
 
     else:
-        st.session_state.pogoda_ligowa = wybrana_pogoda
 
+        st.session_state.pogoda_ligowa = (
+            wybrana_pogoda
+        )
+
+
+    # --------------------------------------------------------
+    # ZMIANA DRUŻYN = NOWY MECZ
+    # --------------------------------------------------------
 
     if (
-        st.session_state.get("mecz_gospodarz")
-        != wybrany_gospodarz
+        st.session_state.get(
+            "mecz_gospodarz"
+        ) != wybrany_gospodarz
         or
-        st.session_state.get("mecz_gosc")
-        != wybrany_gosc
+        st.session_state.get(
+            "mecz_gosc"
+        ) != wybrany_gosc
     ):
 
-        st.session_state.mecz_gospodarz = wybrany_gospodarz
-        st.session_state.mecz_gosc = wybrany_gosc
+        st.session_state.mecz_gospodarz = (
+            wybrany_gospodarz
+        )
+
+        st.session_state.mecz_gosc = (
+            wybrany_gosc
+        )
 
         st.session_state.sklad_gospodarze = {
             nr: "" for nr in range(1, 9)
@@ -639,9 +680,35 @@ if tryb == "🏟️ Mecz ligowy":
             nr: 60 for nr in range(9, 17)
         }
 
+        # usuwamy stare widgety składów
+        for nr in range(1, 9):
+            st.session_state.pop(
+                f"manual_gosp_name_{nr}",
+                None
+            )
+            st.session_state.pop(
+                f"manual_gosp_ovr_{nr}",
+                None
+            )
+
+        for nr in range(9, 17):
+            st.session_state.pop(
+                f"manual_gosc_name_{nr}",
+                None
+            )
+            st.session_state.pop(
+                f"manual_gosc_ovr_{nr}",
+                None
+            )
+
         reset_ligi()
+
         st.rerun()
 
+
+    # --------------------------------------------------------
+    # TABY LIGOWE
+    # --------------------------------------------------------
 
     tab_kadry, tab_taktyka, tab_mecz = st.tabs([
         "👥 1. Wybór Drużyn i Kadry",
@@ -668,6 +735,10 @@ if tryb == "🏟️ Mecz ligowy":
         col_gosp, col_gosc = st.columns(2)
 
 
+        # ----------------------------------------------------
+        # GOSPODARZ
+        # ----------------------------------------------------
+
         with col_gosp:
 
             st.subheader(
@@ -689,14 +760,19 @@ if tryb == "🏟️ Mecz ligowy":
 
                 c1, c2 = st.columns([3, 1])
 
+
                 with c1:
 
-                    name_key = f"manual_gosp_name_{nr}"
+                    name_key = (
+                        f"manual_gosp_name_{nr}"
+                    )
 
                     if name_key not in st.session_state:
+
                         st.session_state[name_key] = (
                             st.session_state.sklad_gospodarze.get(
-                                nr, ""
+                                nr,
+                                ""
                             )
                         )
 
@@ -706,15 +782,19 @@ if tryb == "🏟️ Mecz ligowy":
                         placeholder="Imię i nazwisko"
                     )
 
-                    st.session_state.sklad_gospodarze[nr] = (
-                        st.session_state[name_key]
-                    )
+                    st.session_state.sklad_gospodarze[
+                        nr
+                    ] = st.session_state[name_key]
+
 
                 with c2:
 
-                    ovr_key = f"manual_gosp_ovr_{nr}"
+                    ovr_key = (
+                        f"manual_gosp_ovr_{nr}"
+                    )
 
                     if ovr_key not in st.session_state:
+
                         st.session_state[ovr_key] = 60
 
                     st.number_input(
@@ -725,10 +805,14 @@ if tryb == "🏟️ Mecz ligowy":
                         key=ovr_key
                     )
 
-                    st.session_state.sklad_gospodarze_ovr[nr] = (
-                        st.session_state[ovr_key]
-                    )
+                    st.session_state.sklad_gospodarze_ovr[
+                        nr
+                    ] = st.session_state[ovr_key]
 
+
+        # ----------------------------------------------------
+        # GOŚĆ
+        # ----------------------------------------------------
 
         with col_gosc:
 
@@ -751,14 +835,19 @@ if tryb == "🏟️ Mecz ligowy":
 
                 c1, c2 = st.columns([3, 1])
 
+
                 with c1:
 
-                    name_key = f"manual_gosc_name_{nr}"
+                    name_key = (
+                        f"manual_gosc_name_{nr}"
+                    )
 
                     if name_key not in st.session_state:
+
                         st.session_state[name_key] = (
                             st.session_state.sklad_goscie.get(
-                                nr, ""
+                                nr,
+                                ""
                             )
                         )
 
@@ -768,15 +857,19 @@ if tryb == "🏟️ Mecz ligowy":
                         placeholder="Imię i nazwisko"
                     )
 
-                    st.session_state.sklad_goscie[nr] = (
-                        st.session_state[name_key]
-                    )
+                    st.session_state.sklad_goscie[
+                        nr
+                    ] = st.session_state[name_key]
+
 
                 with c2:
 
-                    ovr_key = f"manual_gosc_ovr_{nr}"
+                    ovr_key = (
+                        f"manual_gosc_ovr_{nr}"
+                    )
 
                     if ovr_key not in st.session_state:
+
                         st.session_state[ovr_key] = 60
 
                     st.number_input(
@@ -787,10 +880,14 @@ if tryb == "🏟️ Mecz ligowy":
                         key=ovr_key
                     )
 
-                    st.session_state.sklad_goscie_ovr[nr] = (
-                        st.session_state[ovr_key]
-                    )
+                    st.session_state.sklad_goscie_ovr[
+                        nr
+                    ] = st.session_state[ovr_key]
 
+
+        # ----------------------------------------------------
+        # Z/Z
+        # ----------------------------------------------------
 
         st.divider()
 
@@ -808,9 +905,16 @@ if tryb == "🏟️ Mecz ligowy":
             )
 
             kand = [
-                (nr, st.session_state.sklad_gospodarze.get(nr))
+                (
+                    nr,
+                    st.session_state.sklad_gospodarze.get(
+                        nr
+                    )
+                )
                 for nr in range(1, 6)
-                if st.session_state.sklad_gospodarze.get(nr)
+                if st.session_state.sklad_gospodarze.get(
+                    nr
+                )
             ]
 
             if kand:
@@ -825,14 +929,24 @@ if tryb == "🏟️ Mecz ligowy":
                 )
 
                 if wybor == "Brak":
-                    st.session_state.zz_gosp = None
+
+                    st.session_state.zz_gosp = (
+                        None
+                    )
+
                 else:
+
                     st.session_state.zz_gosp = int(
-                        wybor.split(" - ")[0].replace("Nr ", "")
+                        wybor
+                        .split(" - ")[0]
+                        .replace("Nr ", "")
                     )
 
             else:
-                st.info("Najpierw wpisz zawodników 1–5.")
+
+                st.info(
+                    "Najpierw wpisz zawodników 1–5."
+                )
 
 
         with z2:
@@ -842,9 +956,16 @@ if tryb == "🏟️ Mecz ligowy":
             )
 
             kand = [
-                (nr, st.session_state.sklad_goscie.get(nr))
+                (
+                    nr,
+                    st.session_state.sklad_goscie.get(
+                        nr
+                    )
+                )
                 for nr in range(9, 14)
-                if st.session_state.sklad_goscie.get(nr)
+                if st.session_state.sklad_goscie.get(
+                    nr
+                )
             ]
 
             if kand:
@@ -859,14 +980,24 @@ if tryb == "🏟️ Mecz ligowy":
                 )
 
                 if wybor == "Brak":
-                    st.session_state.zz_gosc = None
+
+                    st.session_state.zz_gosc = (
+                        None
+                    )
+
                 else:
+
                     st.session_state.zz_gosc = int(
-                        wybor.split(" - ")[0].replace("Nr ", "")
+                        wybor
+                        .split(" - ")[0]
+                        .replace("Nr ", "")
                     )
 
             else:
-                st.info("Najpierw wpisz zawodników 9–13.")
+
+                st.info(
+                    "Najpierw wpisz zawodników 9–13."
+                )
 
 
     # ========================================================
@@ -966,9 +1097,12 @@ if tryb == "🏟️ Mecz ligowy":
 
         if st.button(
             "🔄 Resetuj Mecz",
-            use_container_width=True
+            use_container_width=True,
+            key="reset_mecz_liga"
         ):
+
             reset_ligi()
+
             st.rerun()
 
 
@@ -982,6 +1116,10 @@ if tryb == "🏟️ Mecz ligowy":
         )
 
 
+        # ----------------------------------------------------
+        # BURZA
+        # ----------------------------------------------------
+
         if (
             st.session_state.current_heat == 8
             and "Burza" in wybrana_pogoda
@@ -994,23 +1132,42 @@ if tryb == "🏟️ Mecz ligowy":
 
             a, b = st.columns(2)
 
+
             with a:
 
                 if st.button(
-                    "🔴 Przerwij mecz i zalicz wynik"
+                    "🔴 Przerwij mecz i zalicz wynik",
+                    key="liga_przerwij"
                 ):
-                    st.session_state.mecz_przerwany = True
-                    st.session_state.decyzja_o_przerwaniu_podjeta = True
+
+                    st.session_state.mecz_przerwany = (
+                        True
+                    )
+
+                    st.session_state.decyzja_o_przerwaniu_podjeta = (
+                        True
+                    )
+
                     st.rerun()
+
 
             with b:
 
                 if st.button(
-                    "🟢 Jedziemy dalej"
+                    "🟢 Jedziemy dalej",
+                    key="liga_jedziemy"
                 ):
-                    st.session_state.decyzja_o_przerwaniu_podjeta = True
+
+                    st.session_state.decyzja_o_przerwaniu_podjeta = (
+                        True
+                    )
+
                     st.rerun()
 
+
+        # ----------------------------------------------------
+        # MECZ PRZERWANY
+        # ----------------------------------------------------
 
         if st.session_state.mecz_przerwany:
 
@@ -1022,6 +1179,10 @@ if tryb == "🏟️ Mecz ligowy":
                 f"{wybrany_gosc}"
             )
 
+
+        # ----------------------------------------------------
+        # BIEGI
+        # ----------------------------------------------------
 
         elif st.session_state.current_heat < 15:
 
@@ -1037,42 +1198,78 @@ if tryb == "🏟️ Mecz ligowy":
                 f"🚀 Bieg {nr_b} / 15"
             )
 
+
             roznica = (
                 st.session_state.score_gosp
                 - st.session_state.score_gosc
             )
 
-            taktyczna_gosp = roznica <= -6
-            taktyczna_gosc = roznica >= 6
+            taktyczna_gosp = (
+                roznica <= -6
+            )
 
+            taktyczna_gosc = (
+                roznica >= 6
+            )
+
+
+            # ------------------------------------------------
+            # SUMA PUNKTÓW
+            # ------------------------------------------------
 
             def get_pkt_sum(nr):
 
                 suma = 0
 
-                for wynik in st.session_state.rider_heats.get(
-                    nr, []
+                for wynik in (
+                    st.session_state.rider_heats.get(
+                        nr,
+                        []
+                    )
                 ):
-                    if str(wynik).startswith("3"):
+
+                    tekst = str(wynik)
+
+                    if tekst.startswith("3"):
                         suma += 3
-                    elif str(wynik).startswith("2"):
+
+                    elif tekst.startswith("2"):
                         suma += 2
-                    elif str(wynik).startswith("1"):
+
+                    elif tekst.startswith("1"):
                         suma += 1
 
                 return (
                     suma
-                    + st.session_state.rider_bonuses.get(nr, 0)
+                    + st.session_state.rider_bonuses.get(
+                        nr,
+                        0
+                    )
                 )
 
+
+            # ------------------------------------------------
+            # Z/Z
+            # ------------------------------------------------
 
             def nr_jest_zz(nr):
 
                 if nr <= 8:
-                    return nr == st.session_state.zz_gosp
 
-                return nr == st.session_state.zz_gosc
+                    return (
+                        nr
+                        == st.session_state.zz_gosp
+                    )
 
+                return (
+                    nr
+                    == st.session_state.zz_gosc
+                )
+
+
+            # ------------------------------------------------
+            # LIMIT STARTÓW
+            # ------------------------------------------------
 
             def moze_startowac(
                 nr,
@@ -1081,22 +1278,40 @@ if tryb == "🏟️ Mecz ligowy":
                 jako_rt=False
             ):
 
-                if nr in st.session_state.kontuzjowani:
+                if (
+                    nr
+                    in st.session_state.kontuzjowani
+                ):
                     return False
 
-                normalne = st.session_state.normal_starts_count.get(
-                    nr, 0
+
+                normalne = (
+                    st.session_state.normal_starts_count.get(
+                        nr,
+                        0
+                    )
                 )
 
-                rt = st.session_state.rt_count.get(
-                    nr, 0
+                rt = (
+                    st.session_state.rt_count.get(
+                        nr,
+                        0
+                    )
                 )
 
-                zz = st.session_state.zz_count.get(
-                    nr, 0
+                zz = (
+                    st.session_state.zz_count.get(
+                        nr,
+                        0
+                    )
                 )
 
-                razem = normalne + rt + zz
+                razem = (
+                    normalne
+                    + rt
+                    + zz
+                )
+
 
                 if jako_zz:
 
@@ -1107,8 +1322,10 @@ if tryb == "🏟️ Mecz ligowy":
                         and razem < 7
                     )
 
+
                 if nr_jest_zz(nr):
                     return False
+
 
                 if jako_rt:
 
@@ -1119,8 +1336,13 @@ if tryb == "🏟️ Mecz ligowy":
                         and razem < 7
                     )
 
+
                 if bieg in [14, 15]:
-                    return razem < 7
+
+                    return (
+                        razem < 7
+                    )
+
 
                 return (
                     normalne < 5
@@ -1128,9 +1350,17 @@ if tryb == "🏟️ Mecz ligowy":
                 )
 
 
-            def opcje_gosp(prog_nr, wykluczone):
+            # ------------------------------------------------
+            # OPCJE GOSPODARZA
+            # ------------------------------------------------
+
+            def opcje_gosp(
+                prog_nr,
+                wykluczone
+            ):
 
                 wynik = []
+
 
                 if nr_jest_zz(prog_nr):
 
@@ -1139,14 +1369,19 @@ if tryb == "🏟️ Mecz ligowy":
                         if (
                             nr != prog_nr
                             and nr not in wykluczone
-                            and st.session_state.sklad_gospodarze.get(nr)
+                            and st.session_state.sklad_gospodarze.get(
+                                nr
+                            )
                             and moze_startowac(
                                 nr,
                                 nr_b,
                                 jako_zz=True
                             )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                     return wynik
 
@@ -1158,8 +1393,13 @@ if tryb == "🏟️ Mecz ligowy":
                         for nr in range(1, 9)
                         if (
                             nr not in wykluczone
-                            and st.session_state.sklad_gospodarze.get(nr)
-                            and moze_startowac(nr, nr_b)
+                            and st.session_state.sklad_gospodarze.get(
+                                nr
+                            )
+                            and moze_startowac(
+                                nr,
+                                nr_b
+                            )
                         )
                     ]
 
@@ -1179,20 +1419,36 @@ if tryb == "🏟️ Mecz ligowy":
 
                         if (
                             nr not in wykluczone
-                            and st.session_state.sklad_gospodarze.get(nr)
-                            and moze_startowac(nr, nr_b)
+                            and st.session_state.sklad_gospodarze.get(
+                                nr
+                            )
+                            and moze_startowac(
+                                nr,
+                                nr_b
+                            )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                     return wynik
 
 
                 if (
                     prog_nr not in wykluczone
-                    and st.session_state.sklad_gospodarze.get(prog_nr)
-                    and moze_startowac(prog_nr, nr_b)
+                    and st.session_state.sklad_gospodarze.get(
+                        prog_nr
+                    )
+                    and moze_startowac(
+                        prog_nr,
+                        nr_b
+                    )
                 ):
-                    wynik.append(prog_nr)
+
+                    wynik.append(
+                        prog_nr
+                    )
 
 
                 for nr in [8, 6, 7]:
@@ -1200,10 +1456,18 @@ if tryb == "🏟️ Mecz ligowy":
                     if (
                         nr not in wynik
                         and nr not in wykluczone
-                        and st.session_state.sklad_gospodarze.get(nr)
-                        and moze_startowac(nr, nr_b)
+                        and st.session_state.sklad_gospodarze.get(
+                            nr
+                        )
+                        and moze_startowac(
+                            nr,
+                            nr_b
+                        )
                     ):
-                        wynik.append(nr)
+
+                        wynik.append(
+                            nr
+                        )
 
 
                 if taktyczna_gosp:
@@ -1213,21 +1477,34 @@ if tryb == "🏟️ Mecz ligowy":
                         if (
                             nr not in wynik
                             and nr not in wykluczone
-                            and st.session_state.sklad_gospodarze.get(nr)
+                            and st.session_state.sklad_gospodarze.get(
+                                nr
+                            )
                             and moze_startowac(
                                 nr,
                                 nr_b,
                                 jako_rt=True
                             )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                 return wynik
 
 
-            def opcje_gosc(prog_nr, wykluczone):
+            # ------------------------------------------------
+            # OPCJE GOŚCIA
+            # ------------------------------------------------
+
+            def opcje_gosc(
+                prog_nr,
+                wykluczone
+            ):
 
                 wynik = []
+
 
                 if nr_jest_zz(prog_nr):
 
@@ -1236,14 +1513,19 @@ if tryb == "🏟️ Mecz ligowy":
                         if (
                             nr != prog_nr
                             and nr not in wykluczone
-                            and st.session_state.sklad_goscie.get(nr)
+                            and st.session_state.sklad_goscie.get(
+                                nr
+                            )
                             and moze_startowac(
                                 nr,
                                 nr_b,
                                 jako_zz=True
                             )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                     return wynik
 
@@ -1255,8 +1537,13 @@ if tryb == "🏟️ Mecz ligowy":
                         for nr in range(9, 17)
                         if (
                             nr not in wykluczone
-                            and st.session_state.sklad_goscie.get(nr)
-                            and moze_startowac(nr, nr_b)
+                            and st.session_state.sklad_goscie.get(
+                                nr
+                            )
+                            and moze_startowac(
+                                nr,
+                                nr_b
+                            )
                         )
                     ]
 
@@ -1276,20 +1563,36 @@ if tryb == "🏟️ Mecz ligowy":
 
                         if (
                             nr not in wykluczone
-                            and st.session_state.sklad_goscie.get(nr)
-                            and moze_startowac(nr, nr_b)
+                            and st.session_state.sklad_goscie.get(
+                                nr
+                            )
+                            and moze_startowac(
+                                nr,
+                                nr_b
+                            )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                     return wynik
 
 
                 if (
                     prog_nr not in wykluczone
-                    and st.session_state.sklad_goscie.get(prog_nr)
-                    and moze_startowac(prog_nr, nr_b)
+                    and st.session_state.sklad_goscie.get(
+                        prog_nr
+                    )
+                    and moze_startowac(
+                        prog_nr,
+                        nr_b
+                    )
                 ):
-                    wynik.append(prog_nr)
+
+                    wynik.append(
+                        prog_nr
+                    )
 
 
                 for nr in [16, 14, 15]:
@@ -1297,10 +1600,18 @@ if tryb == "🏟️ Mecz ligowy":
                     if (
                         nr not in wynik
                         and nr not in wykluczone
-                        and st.session_state.sklad_goscie.get(nr)
-                        and moze_startowac(nr, nr_b)
+                        and st.session_state.sklad_goscie.get(
+                            nr
+                        )
+                        and moze_startowac(
+                            nr,
+                            nr_b
+                        )
                     ):
-                        wynik.append(nr)
+
+                        wynik.append(
+                            nr
+                        )
 
 
                 if taktyczna_gosc:
@@ -1310,21 +1621,31 @@ if tryb == "🏟️ Mecz ligowy":
                         if (
                             nr not in wynik
                             and nr not in wykluczone
-                            and st.session_state.sklad_goscie.get(nr)
+                            and st.session_state.sklad_goscie.get(
+                                nr
+                            )
                             and moze_startowac(
                                 nr,
                                 nr_b,
                                 jako_rt=True
                             )
                         ):
-                            wynik.append(nr)
+
+                            wynik.append(
+                                nr
+                            )
 
                 return wynik
 
 
+            # ------------------------------------------------
+            # WYBÓR 4 ZAWODNIKÓW
+            # ------------------------------------------------
+
             cols = st.columns(4)
 
             wybrane = []
+
             uczestnicy = {}
 
 
@@ -1333,9 +1654,13 @@ if tryb == "🏟️ Mecz ligowy":
             ):
 
                 prog_nr = heat[pole]
+
                 kask = heat["kaski"][pole]
 
-                gospodarze = kask in ["🔴", "🔵"]
+                gospodarze = (
+                    kask in ["🔴", "🔵"]
+                )
+
 
                 if gospodarze:
 
@@ -1344,8 +1669,13 @@ if tryb == "🏟️ Mecz ligowy":
                         wybrane
                     )
 
-                    sklad = st.session_state.sklad_gospodarze
-                    ovr = st.session_state.sklad_gospodarze_ovr
+                    sklad = (
+                        st.session_state.sklad_gospodarze
+                    )
+
+                    ovr = (
+                        st.session_state.sklad_gospodarze_ovr
+                    )
 
                 else:
 
@@ -1354,27 +1684,38 @@ if tryb == "🏟️ Mecz ligowy":
                         wybrane
                     )
 
-                    sklad = st.session_state.sklad_goscie
-                    ovr = st.session_state.sklad_goscie_ovr
+                    sklad = (
+                        st.session_state.sklad_goscie
+                    )
+
+                    ovr = (
+                        st.session_state.sklad_goscie_ovr
+                    )
+
 
                 with cols[i]:
 
                     if not opcje:
+
                         st.error(
                             f"Brak zawodnika dla pola {pole}."
                         )
+
                         st.stop()
+
 
                     def format_zawodnika(
                         x,
                         sklad=sklad,
                         ovr=ovr
                     ):
+
                         return (
                             f"Nr {x} - "
                             f"{sklad[x]} "
                             f"(OVR: {ovr[x]})"
                         )
+
 
                     wybor = st.selectbox(
                         (
@@ -1383,12 +1724,21 @@ if tryb == "🏟️ Mecz ligowy":
                         ),
                         opcje,
                         format_func=format_zawodnika,
-                        key=f"liga_heat_{nr_b}_{pole}"
+                        key=(
+                            f"liga_heat_{nr_b}_{pole}"
+                        )
                     )
 
-                    wybrane.append(wybor)
 
-                    czy_zz = nr_jest_zz(prog_nr)
+                    wybrane.append(
+                        wybor
+                    )
+
+
+                    czy_zz = nr_jest_zz(
+                        prog_nr
+                    )
+
 
                     czy_rt = (
                         not czy_zz
@@ -1408,27 +1758,51 @@ if tryb == "🏟️ Mecz ligowy":
                             if gospodarze
                             else taktyczna_gosc
                         )
-                        and nr_b not in [2, 14, 15]
+                        and nr_b not in [
+                            2,
+                            14,
+                            15
+                        ]
                     )
 
+
                     uczestnicy[pole] = {
-                        "nr": wybor,
-                        "nazwisko": sklad[wybor],
-                        "ovr": ovr[wybor],
-                        "kask": kask,
-                        "druzyna": (
-                            "gosp"
-                            if gospodarze
-                            else "gosc"
-                        ),
-                        "czy_zz": czy_zz,
-                        "czy_rt": czy_rt
+
+                        "nr":
+                            wybor,
+
+                        "nazwisko":
+                            sklad[wybor],
+
+                        "ovr":
+                            ovr[wybor],
+
+                        "kask":
+                            kask,
+
+                        "druzyna":
+                            (
+                                "gosp"
+                                if gospodarze
+                                else "gosc"
+                            ),
+
+                        "czy_zz":
+                            czy_zz,
+
+                        "czy_rt":
+                            czy_rt
                     }
 
 
+            # ------------------------------------------------
+            # JEDŹ BIEG
+            # ------------------------------------------------
+
             if st.button(
                 "🏁 Jedź Bieg",
-                use_container_width=True
+                use_container_width=True,
+                key=f"liga_jedz_{nr_b}"
             ):
 
                 lista = list(
@@ -1438,19 +1812,41 @@ if tryb == "🏟️ Mecz ligowy":
                 zdarzenia = []
 
 
+                # --------------------------------------------
+                # RODZAJ STARTU
+                # --------------------------------------------
+
                 for u in lista:
 
                     nr = u["nr"]
 
                     if u["czy_zz"]:
-                        st.session_state.zz_count[nr] += 1
+
+                        st.session_state.zz_count[
+                            nr
+                        ] += 1
+
                     elif u["czy_rt"]:
-                        st.session_state.rt_count[nr] += 1
+
+                        st.session_state.rt_count[
+                            nr
+                        ] += 1
+
                     else:
-                        st.session_state.normal_starts_count[nr] += 1
 
-                    st.session_state.starts_count[nr] += 1
+                        st.session_state.normal_starts_count[
+                            nr
+                        ] += 1
 
+
+                    st.session_state.starts_count[
+                        nr
+                    ] += 1
+
+
+                # --------------------------------------------
+                # SIŁA
+                # --------------------------------------------
 
                 for u in lista:
 
@@ -1491,8 +1887,10 @@ if tryb == "🏟️ Mecz ligowy":
 
                     if "Twardy" in tor:
                         typ_toru = "twardy"
+
                     elif "Przyczepny" in tor:
                         typ_toru = "przyczepny"
+
                     else:
                         typ_toru = "neutralny"
 
@@ -1505,17 +1903,26 @@ if tryb == "🏟️ Mecz ligowy":
 
 
                     if "Agresywne" in styl:
+
                         sila += 1
+
                         szansa_defektu = 0.04
+
                     elif "Defensywne" in styl:
+
                         sila -= 0.5
+
                         szansa_defektu = 0.015
+
                     else:
+
                         szansa_defektu = 0.02
 
 
                     if "Ekstra Mocny" in sprzet:
+
                         sila += 2
+
                         szansa_defektu += 0.02
 
 
@@ -1527,20 +1934,28 @@ if tryb == "🏟️ Mecz ligowy":
                     if los < szansa_defektu:
 
                         u["wynik_litera"] = "D"
+
                         u["sila"] = -100
 
                         zdarzenia.append(
-                            f"💨 Defekt sprzętu: {u['nazwisko']}!"
+                            f"💨 Defekt sprzętu: "
+                            f"{u['nazwisko']}!"
                         )
 
-                    elif los < szansa_defektu + 0.03:
+
+                    elif los < (
+                        szansa_defektu + 0.03
+                    ):
 
                         u["wynik_litera"] = "U"
+
                         u["sila"] = -200
 
                         zdarzenia.append(
-                            f"💥 Upadek: {u['nazwisko']}!"
+                            f"💥 Upadek: "
+                            f"{u['nazwisko']}!"
                         )
+
 
                         if random.random() < 0.20:
 
@@ -1553,19 +1968,29 @@ if tryb == "🏟️ Mecz ligowy":
                                 f"niezdolny do dalszej jazdy!"
                             )
 
-                    elif los < szansa_defektu + 0.08:
+
+                    elif los < (
+                        szansa_defektu + 0.08
+                    ):
 
                         u["wynik_litera"] = "W"
+
                         u["sila"] = -300
 
                         zdarzenia.append(
-                            f"🚫 Wykluczenie: {u['nazwisko']}!"
+                            f"🚫 Wykluczenie: "
+                            f"{u['nazwisko']}!"
                         )
+
 
                     else:
 
                         u["wynik_litera"] = None
 
+
+                # --------------------------------------------
+                # KLASYFIKACJA
+                # --------------------------------------------
 
                 lista.sort(
                     key=lambda x: x["sila"],
@@ -1574,20 +1999,35 @@ if tryb == "🏟️ Mecz ligowy":
 
 
                 sklasyfikowani = [
-                    u for u in lista
+                    u
+                    for u in lista
                     if not u["wynik_litera"]
                 ]
 
+
                 niesklasyfikowani = [
-                    u for u in lista
+                    u
+                    for u in lista
                     if u["wynik_litera"]
                 ]
 
-                punkty = [3, 2, 1, 0]
+
+                punkty = [
+                    3,
+                    2,
+                    1,
+                    0
+                ]
+
 
                 wynik_g = 0
+
                 wynik_go = 0
 
+
+                # --------------------------------------------
+                # PUNKTY
+                # --------------------------------------------
 
                 for i, u in enumerate(
                     sklasyfikowani
@@ -1607,9 +2047,12 @@ if tryb == "🏟️ Mecz ligowy":
                         if (
                             sklasyfikowani
                             and
-                            sklasyfikowani[0]["druzyna"]
+                            sklasyfikowani[0][
+                                "druzyna"
+                            ]
                             == u["druzyna"]
                         ):
+
                             bonus = True
 
 
@@ -1618,12 +2061,17 @@ if tryb == "🏟️ Mecz ligowy":
                         if len(sklasyfikowani) >= 2:
 
                             if (
-                                sklasyfikowani[0]["druzyna"]
+                                sklasyfikowani[0][
+                                    "druzyna"
+                                ]
                                 == u["druzyna"]
                                 or
-                                sklasyfikowani[1]["druzyna"]
+                                sklasyfikowani[1][
+                                    "druzyna"
+                                ]
                                 == u["druzyna"]
                             ):
+
                                 bonus = True
 
 
@@ -1649,10 +2097,17 @@ if tryb == "🏟️ Mecz ligowy":
 
 
                     if u["druzyna"] == "gosp":
+
                         wynik_g += pkt
+
                     else:
+
                         wynik_go += pkt
 
+
+                # --------------------------------------------
+                # D/U/W
+                # --------------------------------------------
 
                 for u in niesklasyfikowani:
 
@@ -1663,8 +2118,13 @@ if tryb == "🏟️ Mecz ligowy":
                     )
 
 
-                st.session_state.score_gosp += wynik_g
-                st.session_state.score_gosc += wynik_go
+                st.session_state.score_gosp += (
+                    wynik_g
+                )
+
+                st.session_state.score_gosc += (
+                    wynik_go
+                )
 
 
                 komentarz = komentarz_biegu(
@@ -1673,21 +2133,32 @@ if tryb == "🏟️ Mecz ligowy":
                 )
 
 
+                # --------------------------------------------
+                # HISTORIA
+                # --------------------------------------------
+
                 szczegoly = []
 
 
                 for u in lista:
 
-                    zapis = st.session_state.rider_heats[
-                        u["nr"]
-                    ][-1]
+                    zapis = (
+                        st.session_state.rider_heats[
+                            u["nr"]
+                        ][-1]
+                    )
 
                     status = ""
 
+
                     if u["czy_zz"]:
+
                         status = " [Z/Z]"
+
                     elif u["czy_rt"]:
+
                         status = " [RT]"
+
 
                     szczegoly.append(
                         f"{u['nazwisko']} "
@@ -1697,12 +2168,20 @@ if tryb == "🏟️ Mecz ligowy":
 
 
                 st.session_state.match_history.append({
-                    "bieg": nr_b,
-                    "wynik_biegu": (
-                        f"{wynik_g}:{wynik_go}"
-                    ),
-                    "szczegoly": ", ".join(szczegoly),
-                    "komentarz": komentarz
+
+                    "bieg":
+                        nr_b,
+
+                    "wynik_biegu":
+                        f"{wynik_g}:{wynik_go}",
+
+                    "szczegoly":
+                        ", ".join(
+                            szczegoly
+                        ),
+
+                    "komentarz":
+                        komentarz
                 })
 
 
@@ -1710,6 +2189,10 @@ if tryb == "🏟️ Mecz ligowy":
 
                 st.rerun()
 
+
+        # ----------------------------------------------------
+        # KONIEC
+        # ----------------------------------------------------
 
         if st.session_state.current_heat >= 15:
 
@@ -1722,6 +2205,10 @@ if tryb == "🏟️ Mecz ligowy":
             )
 
 
+        # ----------------------------------------------------
+        # HISTORIA
+        # ----------------------------------------------------
+
         if st.session_state.match_history:
 
             st.divider()
@@ -1730,13 +2217,16 @@ if tryb == "🏟️ Mecz ligowy":
                 "📜 Historia Biegów i Komentarz Live"
             )
 
+
             for hist in reversed(
                 st.session_state.match_history
             ):
 
                 with st.expander(
-                    f"Bieg {hist['bieg']} | "
-                    f"Wynik: {hist['wynik_biegu']}"
+                    (
+                        f"Bieg {hist['bieg']} | "
+                        f"Wynik: {hist['wynik_biegu']}"
+                    )
                 ):
 
                     st.markdown(
@@ -1749,6 +2239,10 @@ if tryb == "🏟️ Mecz ligowy":
                     )
 
 
+        # ----------------------------------------------------
+        # TABELA
+        # ----------------------------------------------------
+
         st.divider()
 
         st.subheader(
@@ -1756,62 +2250,114 @@ if tryb == "🏟️ Mecz ligowy":
         )
 
 
-        def tabela_ligi(sklad, gospodarze):
+        def tabela_ligi(
+            sklad,
+            gospodarze
+        ):
 
             dane = []
+
 
             for nr, zawodnik in sklad.items():
 
                 if not zawodnik:
                     continue
 
-                biegi = st.session_state.rider_heats.get(
-                    nr,
-                    []
+
+                biegi = (
+                    st.session_state.rider_heats.get(
+                        nr,
+                        []
+                    )
                 )
+
 
                 pkt = 0
 
+
                 for x in biegi:
 
-                    if str(x).startswith("3"):
+                    tekst = str(x)
+
+                    if tekst.startswith("3"):
                         pkt += 3
-                    elif str(x).startswith("2"):
+
+                    elif tekst.startswith("2"):
                         pkt += 2
-                    elif str(x).startswith("1"):
+
+                    elif tekst.startswith("1"):
                         pkt += 1
 
-                bonus = st.session_state.rider_bonuses.get(
-                    nr,
-                    0
-                )
 
-                dane.append({
-                    "Nr": nr,
-                    "Zawodnik": zawodnik,
-                    "OVR": pobierz_ovr(nr, gospodarze),
-                    "Pkt": pkt,
-                    "Bon": bonus,
-                    "Razem": f"{pkt}+{bonus}",
-                    "Biegi": ", ".join(
-                        map(str, biegi)
-                    ) if biegi else "-",
-                    "Starty": len(biegi),
-                    "Zwykłe": st.session_state.normal_starts_count.get(
-                        nr,
-                        0
-                    ),
-                    "RT": st.session_state.rt_count.get(
-                        nr,
-                        0
-                    ),
-                    "Z/Z": st.session_state.zz_count.get(
+                bonus = (
+                    st.session_state.rider_bonuses.get(
                         nr,
                         0
                     )
+                )
+
+
+                dane.append({
+
+                    "Nr":
+                        nr,
+
+                    "Zawodnik":
+                        zawodnik,
+
+                    "OVR":
+                        pobierz_ovr(
+                            nr,
+                            gospodarze
+                        ),
+
+                    "Pkt":
+                        pkt,
+
+                    "Bon":
+                        bonus,
+
+                    "Razem":
+                        f"{pkt}+{bonus}",
+
+                    "Biegi":
+                        (
+                            ", ".join(
+                                map(
+                                    str,
+                                    biegi
+                                )
+                            )
+                            if biegi
+                            else "-"
+                        ),
+
+                    "Starty":
+                        len(biegi),
+
+                    "Zwykłe":
+                        st.session_state.normal_starts_count.get(
+                            nr,
+                            0
+                        ),
+
+                    "RT":
+                        st.session_state.rt_count.get(
+                            nr,
+                            0
+                        ),
+
+                    "Z/Z":
+                        st.session_state.zz_count.get(
+                            nr,
+                            0
+                        )
                 })
 
-            return pd.DataFrame(dane)
+
+            return pd.DataFrame(
+                dane
+            )
 
 
         c1, c2 = st.columns(2)
@@ -1849,6 +2395,166 @@ if tryb == "🏟️ Mecz ligowy":
             )
 
 
+        # ----------------------------------------------------
+        # RAPORT MECZU
+        # ----------------------------------------------------
+
+        st.divider()
+
+        st.subheader(
+            "📄 Raport meczu"
+        )
+
+
+        raport = []
+
+        raport.append(
+            "=========================================="
+        )
+
+        raport.append(
+            "🏁 RAPORT MECZU ŻUŻLOWEGO"
+        )
+
+        raport.append(
+            "=========================================="
+        )
+
+        raport.append(
+            f"Gospodarz: {wybrany_gospodarz}"
+        )
+
+        raport.append(
+            f"Gość: {wybrany_gosc}"
+        )
+
+        raport.append(
+            f"Pogoda: {wybrana_pogoda}"
+        )
+
+        raport.append("")
+
+        raport.append(
+            f"Aktualny wynik: "
+            f"{st.session_state.score_gosp}:"
+            f"{st.session_state.score_gosc}"
+        )
+
+        raport.append("")
+
+        raport.append(
+            "----------- BIEGI -----------"
+        )
+
+
+        for hist in st.session_state.match_history:
+
+            raport.append(
+                f"Bieg {hist['bieg']} | "
+                f"Wynik: {hist['wynik_biegu']}"
+            )
+
+            raport.append(
+                f"Kolejność na mecie: "
+                f"{hist['szczegoly']}"
+            )
+
+            raport.append(
+                f"Komentarz: "
+                f"{hist['komentarz']}"
+            )
+
+            raport.append("")
+
+
+        raport.append(
+            "----------- PUNKTY -----------"
+        )
+
+
+        for sklad, gospodarze in [
+            (
+                st.session_state.sklad_gospodarze,
+                True
+            ),
+            (
+                st.session_state.sklad_goscie,
+                False
+            )
+        ]:
+
+            for nr, zawodnik in sklad.items():
+
+                if not zawodnik:
+                    continue
+
+
+                biegi = (
+                    st.session_state.rider_heats.get(
+                        nr,
+                        []
+                    )
+                )
+
+
+                pkt = 0
+
+
+                for x in biegi:
+
+                    tekst = str(x)
+
+                    if tekst.startswith("3"):
+                        pkt += 3
+
+                    elif tekst.startswith("2"):
+                        pkt += 2
+
+                    elif tekst.startswith("1"):
+                        pkt += 1
+
+
+                bonus = (
+                    st.session_state.rider_bonuses.get(
+                        nr,
+                        0
+                    )
+                )
+
+
+                raport.append(
+                    f"Nr {nr} | "
+                    f"{zawodnik} | "
+                    f"OVR {pobierz_ovr(nr, gospodarze)} | "
+                    f"{pkt}+{bonus} | "
+                    f"Biegi: "
+                    f"{', '.join(map(str, biegi)) if biegi else '-'}"
+                )
+
+
+        raport_text = "\n".join(
+            raport
+        )
+
+
+        st.download_button(
+            "📥 Pobierz raport meczu TXT",
+            raport_text,
+            file_name="raport_meczu.txt",
+            mime="text/plain",
+            use_container_width=True,
+            key="download_raport_liga"
+        )
+
+
+        st.text_area(
+            "📋 Cały raport do skopiowania",
+            raport_text,
+            height=350,
+            key="raport_liga_text"
+        )
+
+
 # ============================================================
 # TRYB ZAWODÓW INDYWIDUALNYCH
 # ============================================================
@@ -1858,6 +2564,7 @@ elif tryb == "🏆 Zawody indywidualne":
     st.sidebar.header(
         "🏆 Zawody Indywidualne"
     )
+
 
     format_turnieju = st.sidebar.selectbox(
         "Format zawodów",
@@ -1869,25 +2576,34 @@ elif tryb == "🏆 Zawody indywidualne":
         key="format_indywidualny"
     )
 
-    nazwa_turnieju = (
-        "SGP"
-        if format_turnieju == "🏆 SGP"
-        else
-        "IMP"
-        if format_turnieju == "🇵🇱 IMP"
-        else
-        "Złoty Kask"
-    )
+
+    if format_turnieju == "🏆 SGP":
+        nazwa_turnieju = "SGP"
+
+    elif format_turnieju == "🇵🇱 IMP":
+        nazwa_turnieju = "IMP"
+
+    else:
+        nazwa_turnieju = "Złoty Kask"
 
 
     if (
-        st.session_state.get("ostatni_format_ind")
+        st.session_state.get(
+            "ostatni_format_ind"
+        )
         != format_turnieju
     ):
 
-        st.session_state.ostatni_format_ind = format_turnieju
+        st.session_state.ostatni_format_ind = (
+            format_turnieju
+        )
+
         reset_indywidualne()
 
+
+    # --------------------------------------------------------
+    # TABY
+    # --------------------------------------------------------
 
     tab_ind_kadra, tab_ind_mecz, tab_ind_tabela = st.tabs([
         "👥 Zawodnicy",
@@ -1895,6 +2611,10 @@ elif tryb == "🏆 Zawody indywidualne":
         "📊 Klasyfikacja"
     ])
 
+
+    # ========================================================
+    # KADRA INDYWIDUALNA
+    # ========================================================
 
     with tab_ind_kadra:
 
@@ -1906,15 +2626,18 @@ elif tryb == "🏆 Zawody indywidualne":
             "Wpisz 20 zawodników."
         )
 
+
         for nr in range(1, 21):
 
             st.markdown(
                 f"### Nr {nr}"
             )
 
+
             c1, c2, c3, c4 = st.columns(
                 [3, 1, 1, 1]
             )
+
 
             with c1:
 
@@ -1923,6 +2646,7 @@ elif tryb == "🏆 Zawody indywidualne":
                     key=f"ind_name_{nr}",
                     placeholder="np. Bartosz Zmarzlik"
                 )
+
 
             with c2:
 
@@ -1933,6 +2657,7 @@ elif tryb == "🏆 Zawody indywidualne":
                     value=60,
                     key=f"ind_ovr_{nr}"
                 )
+
 
             with c3:
 
@@ -1955,6 +2680,7 @@ elif tryb == "🏆 Zawody indywidualne":
                     key=f"ind_kraj_{nr}"
                 )
 
+
             with c4:
 
                 st.checkbox(
@@ -1970,9 +2696,14 @@ elif tryb == "🏆 Zawody indywidualne":
         )
 
 
+    # ========================================================
+    # FUNKCJE INDYWIDUALNE
+    # ========================================================
+
     def zawodnicy_ind():
 
         wynik = []
+
 
         for nr in range(1, 21):
 
@@ -1981,25 +2712,37 @@ elif tryb == "🏆 Zawody indywidualne":
                 ""
             )
 
+
             if not nazwa:
                 continue
 
+
             wynik.append({
-                "nr": nr,
-                "nazwisko": nazwa,
-                "ovr": st.session_state.get(
-                    f"ind_ovr_{nr}",
-                    60
-                ),
-                "kraj": st.session_state.get(
-                    f"ind_kraj_{nr}",
-                    "🇵🇱 Polska"
-                ),
-                "u24": st.session_state.get(
-                    f"ind_u24_{nr}",
-                    False
-                )
+                "nr":
+                    nr,
+
+                "nazwisko":
+                    nazwa,
+
+                "ovr":
+                    st.session_state.get(
+                        f"ind_ovr_{nr}",
+                        60
+                    ),
+
+                "kraj":
+                    st.session_state.get(
+                        f"ind_kraj_{nr}",
+                        "🇵🇱 Polska"
+                    ),
+
+                "u24":
+                    st.session_state.get(
+                        f"ind_u24_{nr}",
+                        False
+                    )
             })
+
 
         return wynik
 
@@ -2007,6 +2750,7 @@ elif tryb == "🏆 Zawody indywidualne":
     def generuj_program_indywidualny():
 
         program = []
+
 
         for bieg in range(20):
 
@@ -2017,7 +2761,10 @@ elif tryb == "🏆 Zawody indywidualne":
                 ((bieg + 15) % 20) + 1
             ]
 
-            program.append(grupa)
+            program.append(
+                grupa
+            )
+
 
         return program
 
@@ -2029,9 +2776,14 @@ elif tryb == "🏆 Zawody indywidualne":
         )
 
 
+    # ========================================================
+    # CENTRUM INDYWIDUALNE
+    # ========================================================
+
     with tab_ind_mecz:
 
         zawodnicy = zawodnicy_ind()
+
 
         if len(zawodnicy) < 4:
 
@@ -2039,15 +2791,18 @@ elif tryb == "🏆 Zawody indywidualne":
                 "Wpisz co najmniej 4 zawodników."
             )
 
+
         else:
 
             st.header(
                 f"🏁 {nazwa_turnieju}"
             )
 
+
             if st.button(
                 "🔄 Resetuj zawody",
-                use_container_width=True
+                use_container_width=True,
+                key="reset_indywidualne"
             ):
 
                 reset_indywidualne()
@@ -2059,15 +2814,23 @@ elif tryb == "🏆 Zawody indywidualne":
                 st.rerun()
 
 
-            if st.session_state.ind_current_heat < 20:
+            if (
+                st.session_state.ind_current_heat
+                < 20
+            ):
 
                 nr_biegu = (
-                    st.session_state.ind_current_heat + 1
+                    st.session_state.ind_current_heat
+                    + 1
                 )
 
-                program = st.session_state.ind_program[
-                    st.session_state.ind_current_heat
-                ]
+
+                program = (
+                    st.session_state.ind_program[
+                        st.session_state.ind_current_heat
+                    ]
+                )
+
 
                 st.divider()
 
@@ -2075,11 +2838,15 @@ elif tryb == "🏆 Zawody indywidualne":
                     f"🚀 Bieg {nr_biegu} / 20"
                 )
 
+
                 cols = st.columns(4)
 
                 wybrane_ind = []
 
-                for i, nr in enumerate(program):
+
+                for i, nr in enumerate(
+                    program
+                ):
 
                     zawodnik = next(
                         (
@@ -2089,6 +2856,7 @@ elif tryb == "🏆 Zawody indywidualne":
                         ),
                         None
                     )
+
 
                     with cols[i]:
 
@@ -2112,6 +2880,7 @@ elif tryb == "🏆 Zawody indywidualne":
                                 zawodnik
                             )
 
+
                 if len(wybrane_ind) == 4:
 
                     if st.button(
@@ -2121,7 +2890,9 @@ elif tryb == "🏆 Zawody indywidualne":
                     ):
 
                         wyniki = []
+
                         zdarzenia = []
+
 
                         for u in wybrane_ind:
 
@@ -2131,42 +2902,71 @@ elif tryb == "🏆 Zawody indywidualne":
                                 "☀️"
                             )
 
+
                             zawodnik = dict(u)
 
-                            zawodnik["sila"] = sila
-                            zawodnik["wynik_litera"] = None
+                            zawodnik["sila"] = (
+                                sila
+                            )
+
+                            zawodnik["wynik_litera"] = (
+                                None
+                            )
+
 
                             los = random.random()
 
+
                             if los < 0.02:
 
-                                zawodnik["wynik_litera"] = "D"
-                                zawodnik["sila"] = -100
+                                zawodnik[
+                                    "wynik_litera"
+                                ] = "D"
+
+                                zawodnik[
+                                    "sila"
+                                ] = -100
+
 
                                 zdarzenia.append(
                                     f"💨 Defekt sprzętu: "
                                     f"{u['nazwisko']}!"
                                 )
 
+
                             elif los < 0.05:
 
-                                zawodnik["wynik_litera"] = "U"
-                                zawodnik["sila"] = -200
+                                zawodnik[
+                                    "wynik_litera"
+                                ] = "U"
+
+                                zawodnik[
+                                    "sila"
+                                ] = -200
+
 
                                 zdarzenia.append(
                                     f"💥 Upadek: "
                                     f"{u['nazwisko']}!"
                                 )
 
+
                             elif los < 0.08:
 
-                                zawodnik["wynik_litera"] = "W"
-                                zawodnik["sila"] = -300
+                                zawodnik[
+                                    "wynik_litera"
+                                ] = "W"
+
+                                zawodnik[
+                                    "sila"
+                                ] = -300
+
 
                                 zdarzenia.append(
                                     f"🚫 Wykluczenie: "
                                     f"{u['nazwisko']}!"
                                 )
+
 
                             wyniki.append(
                                 zawodnik
@@ -2178,19 +2978,32 @@ elif tryb == "🏆 Zawody indywidualne":
                             reverse=True
                         )
 
+
                         sklasyfikowani = [
                             x
                             for x in wyniki
-                            if not x["wynik_litera"]
+                            if not x[
+                                "wynik_litera"
+                            ]
                         ]
+
 
                         niesklasyfikowani = [
                             x
                             for x in wyniki
-                            if x["wynik_litera"]
+                            if x[
+                                "wynik_litera"
+                            ]
                         ]
 
-                        punkty = [3, 2, 1, 0]
+
+                        punkty = [
+                            3,
+                            2,
+                            1,
+                            0
+                        ]
+
 
                         for i, u in enumerate(
                             sklasyfikowani
@@ -2198,15 +3011,18 @@ elif tryb == "🏆 Zawody indywidualne":
 
                             pkt = punkty[i]
 
+
                             st.session_state.ind_points[
                                 u["nr"]
                             ] += pkt
+
 
                             st.session_state.ind_heats[
                                 u["nr"]
                             ].append(
                                 str(pkt)
                             )
+
 
                         for u in niesklasyfikowani:
 
@@ -2219,23 +3035,29 @@ elif tryb == "🏆 Zawody indywidualne":
 
                         szczegoly = []
 
+
                         for i, u in enumerate(
                             wyniki
                         ):
 
                             if u["wynik_litera"]:
 
-                                zapis = u["wynik_litera"]
+                                zapis = (
+                                    u["wynik_litera"]
+                                )
 
                             else:
 
                                 poz = (
-                                    sklasyfikowani.index(u)
+                                    sklasyfikowani.index(
+                                        u
+                                    )
                                 )
 
                                 zapis = str(
                                     punkty[poz]
                                 )
+
 
                             szczegoly.append(
                                 f"{u['nazwisko']} "
@@ -2244,30 +3066,53 @@ elif tryb == "🏆 Zawody indywidualne":
                             )
 
 
-                        komentarz = komentarz_biegu(
-                            [
-                                {
-                                    "nazwisko": u["nazwisko"],
-                                    "sila": u["sila"],
-                                    "druzyna": "ind"
-                                }
-                                for u in sklasyfikowani
-                            ],
-                            zdarzenia
+                        komentarz = (
+                            komentarz_biegu(
+                                [
+                                    {
+                                        "nazwisko":
+                                            u["nazwisko"],
+
+                                        "sila":
+                                            u["sila"],
+
+                                        "druzyna":
+                                            "ind"
+                                    }
+                                    for u
+                                    in sklasyfikowani
+                                ],
+                                zdarzenia
+                            )
                         )
 
 
                         st.session_state.ind_history.append({
-                            "bieg": nr_biegu,
-                            "wynik_biegu": "IND",
-                            "szczegoly": ", ".join(szczegoly),
-                            "komentarz": komentarz
+
+                            "bieg":
+                                nr_biegu,
+
+                            "wynik_biegu":
+                                "IND",
+
+                            "szczegoly":
+                                ", ".join(
+                                    szczegoly
+                                ),
+
+                            "komentarz":
+                                komentarz
                         })
+
 
                         st.session_state.ind_current_heat += 1
 
                         st.rerun()
 
+
+            # ------------------------------------------------
+            # FINAŁ
+            # ------------------------------------------------
 
             elif (
                 st.session_state.ind_current_heat >= 20
@@ -2278,20 +3123,24 @@ elif tryb == "🏆 Zawody indywidualne":
                     "🏆 Finał"
                 )
 
+
                 ranking = sorted(
                     zawodnicy,
-                    key=lambda x: (
+                    key=lambda x:
                         st.session_state.ind_points.get(
                             x["nr"],
                             0
-                        )
-                    ),
+                        ),
                     reverse=True
                 )
 
+
                 finalisci = ranking[:4]
 
-                for i, zawodnik in enumerate(finalisci):
+
+                for i, zawodnik in enumerate(
+                    finalisci
+                ):
 
                     st.write(
                         f"{i + 1}. "
@@ -2299,12 +3148,15 @@ elif tryb == "🏆 Zawody indywidualne":
                         f"{st.session_state.ind_points[zawodnik['nr']]} pkt"
                     )
 
+
                 if st.button(
                     "🏁 Jedź Finał",
-                    use_container_width=True
+                    use_container_width=True,
+                    key="ind_jedz_final"
                 ):
 
                     final_wyniki = []
+
 
                     for zawodnik in finalisci:
 
@@ -2314,18 +3166,33 @@ elif tryb == "🏆 Zawody indywidualne":
                             ""
                         )
 
+
                         final_wyniki.append(
-                            (zawodnik, sila)
+                            (
+                                zawodnik,
+                                sila
+                            )
                         )
+
 
                     final_wyniki.sort(
                         key=lambda x: x[1],
                         reverse=True
                     )
 
-                    bonus_final = [6, 4, 2, 0]
 
-                    for i, (zawodnik, _) in enumerate(
+                    bonus_final = [
+                        6,
+                        4,
+                        2,
+                        0
+                    ]
+
+
+                    for i, (
+                        zawodnik,
+                        _
+                    ) in enumerate(
                         final_wyniki
                     ):
 
@@ -2333,17 +3200,28 @@ elif tryb == "🏆 Zawody indywidualne":
                             zawodnik["nr"]
                         ] += bonus_final[i]
 
-                    st.session_state.ind_final_result = final_wyniki
-                    st.session_state.ind_finished = True
+
+                    st.session_state.ind_final_result = (
+                        final_wyniki
+                    )
+
+                    st.session_state.ind_finished = (
+                        True
+                    )
 
                     st.rerun()
 
+
+            # ------------------------------------------------
+            # KONIEC
+            # ------------------------------------------------
 
             if st.session_state.ind_finished:
 
                 st.success(
                     f"🏆 KONIEC {nazwa_turnieju}!"
                 )
+
 
                 for i, (
                     zawodnik,
@@ -2359,10 +3237,12 @@ elif tryb == "🏆 Zawody indywidualne":
                         "4️⃣"
                     ][i]
 
+
                     st.markdown(
                         f"### {medal} "
                         f"{zawodnik['nazwisko']}"
                     )
+
 
                     st.write(
                         f"{zawodnik['kraj']} | "
@@ -2371,6 +3251,10 @@ elif tryb == "🏆 Zawody indywidualne":
                     )
 
 
+            # ------------------------------------------------
+            # HISTORIA
+            # ------------------------------------------------
+
             if st.session_state.ind_history:
 
                 st.divider()
@@ -2378,6 +3262,7 @@ elif tryb == "🏆 Zawody indywidualne":
                 st.subheader(
                     "📜 Historia biegów"
                 )
+
 
                 for hist in reversed(
                     st.session_state.ind_history
@@ -2400,62 +3285,208 @@ elif tryb == "🏆 Zawody indywidualne":
                         )
 
 
+    # ========================================================
+    # TABELA INDYWIDUALNA
+    # ========================================================
+
     with tab_ind_tabela:
 
         st.header(
             f"📊 Klasyfikacja — {nazwa_turnieju}"
         )
 
+
         zawodnicy = zawodnicy_ind()
 
         dane = []
+
 
         for zawodnik in zawodnicy:
 
             nr = zawodnik["nr"]
 
+
             dane.append({
-                "Miejsce": 0,
-                "Nr": nr,
-                "Zawodnik": zawodnik["nazwisko"],
-                "Kraj": zawodnik["kraj"],
-                "U24": (
-                    "TAK"
-                    if zawodnik["u24"]
-                    else "NIE"
-                ),
-                "OVR": zawodnik["ovr"],
-                "Pkt": st.session_state.ind_points.get(
+
+                "Miejsce":
+                    0,
+
+                "Nr":
                     nr,
-                    0
-                ),
-                "Biegi": ", ".join(
-                    st.session_state.ind_heats.get(
+
+                "Zawodnik":
+                    zawodnik["nazwisko"],
+
+                "Kraj":
+                    zawodnik["kraj"],
+
+                "U24":
+                    (
+                        "TAK"
+                        if zawodnik["u24"]
+                        else "NIE"
+                    ),
+
+                "OVR":
+                    zawodnik["ovr"],
+
+                "Pkt":
+                    st.session_state.ind_points.get(
                         nr,
-                        []
+                        0
+                    ),
+
+                "Biegi":
+                    ", ".join(
+                        st.session_state.ind_heats.get(
+                            nr,
+                            []
+                        )
                     )
-                )
             })
 
-        df = pd.DataFrame(dane)
+
+        df = pd.DataFrame(
+            dane
+        )
+
 
         if not df.empty:
 
             df = df.sort_values(
-                by=["Pkt", "OVR"],
-                ascending=[False, False]
-            ).reset_index(drop=True)
+                by=[
+                    "Pkt",
+                    "OVR"
+                ],
+                ascending=[
+                    False,
+                    False
+                ]
+            ).reset_index(
+                drop=True
+            )
+
 
             df["Miejsce"] = range(
                 1,
                 len(df) + 1
             )
 
+
             st.dataframe(
                 df,
                 hide_index=True,
                 use_container_width=True
             )
+
+
+        # ----------------------------------------------------
+        # RAPORT INDYWIDUALNY
+        # ----------------------------------------------------
+
+        st.divider()
+
+        st.subheader(
+            "📄 Raport zawodów indywidualnych"
+        )
+
+
+        raport_ind = []
+
+
+        raport_ind.append(
+            "=========================================="
+        )
+
+        raport_ind.append(
+            f"🏆 {nazwa_turnieju}"
+        )
+
+        raport_ind.append(
+            "=========================================="
+        )
+
+        raport_ind.append("")
+
+
+        raport_ind.append(
+            "----------- BIEGI -----------"
+        )
+
+
+        for hist in st.session_state.ind_history:
+
+            raport_ind.append(
+                f"Bieg {hist['bieg']} | "
+                f"Wynik: {hist['wynik_biegu']}"
+            )
+
+            raport_ind.append(
+                f"Kolejność na mecie: "
+                f"{hist['szczegoly']}"
+            )
+
+            raport_ind.append(
+                f"Komentarz: "
+                f"{hist['komentarz']}"
+            )
+
+            raport_ind.append("")
+
+
+        raport_ind.append(
+            "----------- KLASYFIKACJA -----------"
+        )
+
+
+        ranking_ind = sorted(
+            zawodnicy,
+            key=lambda x:
+                st.session_state.ind_points.get(
+                    x["nr"],
+                    0
+                ),
+            reverse=True
+        )
+
+
+        for miejsce, zawodnik in enumerate(
+            ranking_ind,
+            start=1
+        ):
+
+            raport_ind.append(
+                f"{miejsce}. "
+                f"{zawodnik['nazwisko']} | "
+                f"{zawodnik['kraj']} | "
+                f"OVR {zawodnik['ovr']} | "
+                f"{st.session_state.ind_points.get(zawodnik['nr'], 0)} pkt | "
+                f"Biegi: "
+                f"{', '.join(map(str, st.session_state.ind_heats.get(zawodnik['nr'], [])))}"
+            )
+
+
+        raport_ind_text = "\n".join(
+            raport_ind
+        )
+
+
+        st.download_button(
+            "📥 Pobierz raport zawodów TXT",
+            raport_ind_text,
+            file_name=f"raport_{nazwa_turnieju}.txt",
+            mime="text/plain",
+            use_container_width=True,
+            key="download_raport_ind"
+        )
+
+
+        st.text_area(
+            "📋 Cały raport do skopiowania",
+            raport_ind_text,
+            height=400,
+            key="raport_ind_text"
+        )
 
 
 # ============================================================
@@ -2479,6 +3510,7 @@ else:
         key="swc_pogoda_select"
     )
 
+
     if swc_pogoda == "🎲 Losowa pogoda":
 
         if st.sidebar.button(
@@ -2493,21 +3525,29 @@ else:
 
             st.rerun()
 
+
         swc_pogoda = st.session_state.get(
             "swc_pogoda",
             POGODY[0]
         )
 
+
     else:
 
-        st.session_state.swc_pogoda = swc_pogoda
+        st.session_state.swc_pogoda = (
+            swc_pogoda
+        )
 
 
     # ========================================================
-    # NAZWY REPREZENTACJI SWC
+    # NAZWY REPREZENTACJI
     # ========================================================
 
-    if "swc_reprezentacje" not in st.session_state:
+    if (
+        "swc_reprezentacje"
+        not in st.session_state
+    ):
+
         st.session_state.swc_reprezentacje = {
             1: "",
             2: "",
@@ -2516,12 +3556,10 @@ else:
         }
 
 
-    # Jedyny blok do wpisywania nazw państw.
-    # Nie ma tutaj już swc_rep_name ani swc_country_name.
-
     st.subheader(
         "🌍 Reprezentacje"
     )
+
 
     rep_cols = st.columns(4)
 
@@ -2530,22 +3568,21 @@ else:
 
         with rep_cols[rep - 1]:
 
-            st.text_input(
+            nazwa = st.text_input(
                 f"Reprezentacja {rep}",
                 key=f"swc_panstwo_{rep}",
                 placeholder="Wpisz dowolne państwo"
             )
 
-            st.session_state.swc_reprezentacje[rep] = (
-                st.session_state[
-                    f"swc_panstwo_{rep}"
-                ].strip()
-            )
+
+            st.session_state.swc_reprezentacje[
+                rep
+            ] = nazwa.strip()
 
 
-    # --------------------------------------------------------
+    # ========================================================
     # TABY SWC
-    # --------------------------------------------------------
+    # ========================================================
 
     swc_kadra, swc_mecz, swc_tabela = st.tabs([
         "👥 1. Składy reprezentacji",
@@ -2555,7 +3592,7 @@ else:
 
 
     # ========================================================
-    # SKŁADY
+    # SKŁADY SWC
     # ========================================================
 
     with swc_kadra:
@@ -2572,8 +3609,11 @@ else:
         for rep in range(1, 5):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
 
 
@@ -2591,9 +3631,11 @@ else:
                         "Rezerwowy"
                     )
 
+
                     st.markdown(
                         f"**Nr {nr} — {rodzaj}**"
                     )
+
 
                     c1, c2 = st.columns(
                         [3, 1]
@@ -2630,14 +3672,11 @@ else:
             "🏎️ Centrum SWC"
         )
 
+
         st.markdown(
             f"### 🌤️ Pogoda: {swc_pogoda}"
         )
 
-
-        # ----------------------------------------------------
-        # WYNIK
-        # ----------------------------------------------------
 
         st.divider()
 
@@ -2652,15 +3691,21 @@ else:
         for rep in range(1, 5):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
+
 
             with wynik_cols[rep - 1]:
 
                 st.metric(
                     nazwa_rep,
-                    st.session_state.swc_score[rep]
+                    st.session_state.swc_score[
+                        rep
+                    ]
                 )
 
 
@@ -2668,7 +3713,7 @@ else:
 
 
         # ----------------------------------------------------
-        # RESET
+        # RESET SWC
         # ----------------------------------------------------
 
         if st.button(
@@ -2678,11 +3723,12 @@ else:
         ):
 
             reset_swc()
+
             st.rerun()
 
 
         # ----------------------------------------------------
-        # SPRAWDZENIE SKŁADÓW
+        # WALIDACJA SKŁADÓW
         # ----------------------------------------------------
 
         brak = []
@@ -2696,6 +3742,7 @@ else:
                     f"swc_name_{rep}_{nr}",
                     ""
                 )
+
 
                 if not nazwa.strip():
 
@@ -2726,7 +3773,8 @@ else:
         ):
 
             nr_biegu = (
-                st.session_state.swc_heat + 1
+                st.session_state.swc_heat
+                + 1
             )
 
 
@@ -2742,14 +3790,14 @@ else:
             )
 
 
-            # -----------------------------------------------
-            # WYBÓR ZAWODNIKÓW
-            # -----------------------------------------------
-
             cols = st.columns(4)
 
             wybrani = []
 
+
+            # ------------------------------------------------
+            # WYBÓR ZAWODNIKÓW
+            # ------------------------------------------------
 
             for rep in range(1, 5):
 
@@ -2775,12 +3823,13 @@ else:
 
 
                 opcje = []
+
                 opis_opcji = {}
 
 
-                # -------------------------------------------
-                # ZAWODNIK PROGRAMOWY
-                # -------------------------------------------
+                # --------------------------------------------
+                # PROGRAMOWY
+                # --------------------------------------------
 
                 if prog_starty < 6:
 
@@ -2788,14 +3837,14 @@ else:
                         prog_nr
                     )
 
-                    opis_opcji[prog_nr] = (
-                        "PROGRAM"
-                    )
+                    opis_opcji[
+                        prog_nr
+                    ] = "PROGRAM"
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # INNI PODSTAWOWI
-                # -------------------------------------------
+                # --------------------------------------------
 
                 for nr in range(1, 5):
 
@@ -2829,14 +3878,16 @@ else:
                                 nr
                             )
 
-                            opis_opcji[nr] = (
+                            opis_opcji[
+                                nr
+                            ] = (
                                 "REZERWA PODSTAWOWA"
                             )
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # REZERWOWY NR 5
-                # -------------------------------------------
+                # --------------------------------------------
 
                 klucz_rez = (
                     f"{rep}_5"
@@ -2862,14 +3913,14 @@ else:
                         5
                     )
 
-                    opis_opcji[5] = (
-                        "REZERWOWY"
-                    )
+                    opis_opcji[
+                        5
+                    ] = "REZERWOWY"
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # RT
-                # -------------------------------------------
+                # --------------------------------------------
 
                 pozostale_repy = [
                     r
@@ -2931,9 +3982,9 @@ else:
                                     nr
                                 )
 
-                                opis_opcji[nr] = (
-                                    "RT"
-                                )
+                                opis_opcji[
+                                    nr
+                                ] = "RT"
 
 
                 opcje = list(
@@ -2946,8 +3997,11 @@ else:
                 with cols[rep - 1]:
 
                     nazwa_rep = (
-                        st.session_state.swc_reprezentacje[rep]
-                        or f"Reprezentacja {rep}"
+                        st.session_state.swc_reprezentacje[
+                            rep
+                        ]
+                        or
+                        f"Reprezentacja {rep}"
                     )
 
 
@@ -2967,16 +4021,20 @@ else:
                             ""
                         )
 
+
                         ovr = st.session_state.get(
                             f"swc_ovr_{rep}_{x}",
                             60
                         )
 
+
                         rodzaj = (
                             "REZERWA"
                             if x == 5
-                            else "PODSTAWOWY"
+                            else
+                            "PODSTAWOWY"
                         )
+
 
                         return (
                             f"Nr {x} - "
@@ -3002,7 +4060,11 @@ else:
                         ),
                         opcje,
                         format_func=format_swc,
-                        key=f"swc_heat_{nr_biegu}_{rep}"
+                        key=(
+                            f"swc_heat_"
+                            f"{nr_biegu}_"
+                            f"{rep}"
+                        )
                     )
 
 
@@ -3025,20 +4087,36 @@ else:
 
 
                     wybrani.append({
-                        "rep": rep,
-                        "nr": wybor,
-                        "program_nr": prog_nr,
-                        "nazwisko": st.session_state.get(
-                            f"swc_name_{rep}_{wybor}",
-                            ""
-                        ),
-                        "ovr": st.session_state.get(
-                            f"swc_ovr_{rep}_{wybor}",
-                            60
-                        ),
-                        "kask": KASKI[rep - 1],
-                        "czy_rt": czy_rt,
-                        "czy_rezerwa": czy_rezerwa
+
+                        "rep":
+                            rep,
+
+                        "nr":
+                            wybor,
+
+                        "program_nr":
+                            prog_nr,
+
+                        "nazwisko":
+                            st.session_state.get(
+                                f"swc_name_{rep}_{wybor}",
+                                ""
+                            ),
+
+                        "ovr":
+                            st.session_state.get(
+                                f"swc_ovr_{rep}_{wybor}",
+                                60
+                            ),
+
+                        "kask":
+                            KASKI[rep - 1],
+
+                        "czy_rt":
+                            czy_rt,
+
+                        "czy_rezerwa":
+                            czy_rezerwa
                     })
 
 
@@ -3058,7 +4136,7 @@ else:
 
 
                 # --------------------------------------------
-                # WALIDACJA LIMITU
+                # LIMIT
                 # --------------------------------------------
 
                 for u in wybrani:
@@ -3154,6 +4232,7 @@ else:
                     if los < 0.02:
 
                         u["wynik_litera"] = "D"
+
                         u["sila"] = -100
 
                         zdarzenia.append(
@@ -3165,6 +4244,7 @@ else:
                     elif los < 0.05:
 
                         u["wynik_litera"] = "U"
+
                         u["sila"] = -200
 
                         zdarzenia.append(
@@ -3176,6 +4256,7 @@ else:
                     elif los < 0.08:
 
                         u["wynik_litera"] = "W"
+
                         u["sila"] = -300
 
                         zdarzenia.append(
@@ -3285,16 +4366,18 @@ else:
 
 
                 # --------------------------------------------
-                # WYNIK REPREZENTACJI
+                # PUNKTY REPREZENTACJI
                 # --------------------------------------------
 
                 for rep in range(1, 5):
 
                     st.session_state.swc_score[
                         rep
-                    ] += wynik_reprezentacji[
-                        rep
-                    ]
+                    ] += (
+                        wynik_reprezentacji[
+                            rep
+                        ]
+                    )
 
 
                 # --------------------------------------------
@@ -3303,9 +4386,11 @@ else:
 
                 uczestnicy_komentarz = []
 
+
                 for u in sklasyfikowani:
 
                     uczestnicy_komentarz.append({
+
                         "nazwisko":
                             u["nazwisko"],
 
@@ -3392,7 +4477,7 @@ else:
 
 
         # ----------------------------------------------------
-        # KONIEC 20 BIEGÓW
+        # KONIEC SWC
         # ----------------------------------------------------
 
         if (
@@ -3403,7 +4488,9 @@ else:
             ranking = sorted(
                 range(1, 5),
                 key=lambda rep:
-                    st.session_state.swc_score[rep],
+                    st.session_state.swc_score[
+                        rep
+                    ],
                 reverse=True
             )
 
@@ -3435,9 +4522,11 @@ else:
                 ):
 
                     rep_a = ranking[0]
+
                     rep_b = ranking[1]
 
                     kand_a = []
+
                     kand_b = []
 
 
@@ -3452,9 +4541,16 @@ else:
                         if nazwa_a:
 
                             kand_a.append({
-                                "rep": rep_a,
-                                "nr": nr,
-                                "nazwisko": nazwa_a,
+
+                                "rep":
+                                    rep_a,
+
+                                "nr":
+                                    nr,
+
+                                "nazwisko":
+                                    nazwa_a,
+
                                 "ovr":
                                     st.session_state.get(
                                         f"swc_ovr_{rep_a}_{nr}",
@@ -3472,9 +4568,16 @@ else:
                         if nazwa_b:
 
                             kand_b.append({
-                                "rep": rep_b,
-                                "nr": nr,
-                                "nazwisko": nazwa_b,
+
+                                "rep":
+                                    rep_b,
+
+                                "nr":
+                                    nr,
+
+                                "nazwisko":
+                                    nazwa_b,
+
                                 "ovr":
                                     st.session_state.get(
                                         f"swc_ovr_{rep_b}_{nr}",
@@ -3487,21 +4590,23 @@ else:
 
                         zawodnik_a = max(
                             kand_a,
-                            key=lambda x: sila_zawodnika(
-                                x["ovr"],
-                                "neutralny",
-                                swc_pogoda
-                            )
+                            key=lambda x:
+                                sila_zawodnika(
+                                    x["ovr"],
+                                    "neutralny",
+                                    swc_pogoda
+                                )
                         )
 
 
                         zawodnik_b = max(
                             kand_b,
-                            key=lambda x: sila_zawodnika(
-                                x["ovr"],
-                                "neutralny",
-                                swc_pogoda
-                            )
+                            key=lambda x:
+                                sila_zawodnika(
+                                    x["ovr"],
+                                    "neutralny",
+                                    swc_pogoda
+                                )
                         )
 
 
@@ -3528,11 +4633,16 @@ else:
                             winner = rep_b
 
 
-                        st.session_state.swc_winner = winner
+                        st.session_state.swc_winner = (
+                            winner
+                        )
 
-                        st.session_state.swc_finished = True
+                        st.session_state.swc_finished = (
+                            True
+                        )
 
                         st.rerun()
+
 
                     else:
 
@@ -3547,7 +4657,9 @@ else:
                     ranking[0]
                 )
 
-                st.session_state.swc_finished = True
+                st.session_state.swc_finished = (
+                    True
+                )
 
 
         # ----------------------------------------------------
@@ -3629,19 +4741,26 @@ else:
         for rep in range(1, 5):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
 
 
             tabela_rep.append({
-                "Miejsce": 0,
+
+                "Miejsce":
+                    0,
 
                 "Reprezentacja":
                     nazwa_rep,
 
                 "Pkt":
-                    st.session_state.swc_score[rep]
+                    st.session_state.swc_score[
+                        rep
+                    ]
             })
 
 
@@ -3673,6 +4792,10 @@ else:
             )
 
 
+        # ----------------------------------------------------
+        # PUNKTY ZAWODNIKÓW
+        # ----------------------------------------------------
+
         st.divider()
 
         st.subheader(
@@ -3686,8 +4809,11 @@ else:
         for rep in range(1, 5):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
 
 
@@ -3721,13 +4847,15 @@ else:
 
                 for x in biegi:
 
-                    if str(x).startswith("3"):
+                    tekst = str(x)
+
+                    if tekst.startswith("3"):
                         pkt += 3
 
-                    elif str(x).startswith("2"):
+                    elif tekst.startswith("2"):
                         pkt += 2
 
-                    elif str(x).startswith("1"):
+                    elif tekst.startswith("1"):
                         pkt += 1
 
 
@@ -3752,12 +4880,16 @@ else:
                         pkt,
 
                     "Biegi":
-                        ", ".join(
-                            map(
-                                str,
-                                biegi
+                        (
+                            ", ".join(
+                                map(
+                                    str,
+                                    biegi
+                                )
                             )
-                        ) if biegi else "-",
+                            if biegi
+                            else "-"
+                        ),
 
                     "Starty":
                         len(biegi),
@@ -3832,7 +4964,10 @@ else:
 
         raport_swc.append(
             f"Pogoda: "
-            f"{st.session_state.get('swc_pogoda', swc_pogoda)}"
+            f"{st.session_state.get(
+                'swc_pogoda',
+                swc_pogoda
+            )}"
         )
 
 
@@ -3847,7 +4982,9 @@ else:
         ranking_raport = sorted(
             range(1, 5),
             key=lambda rep:
-                st.session_state.swc_score[rep],
+                st.session_state.swc_score[
+                    rep
+                ],
             reverse=True
         )
 
@@ -3858,8 +4995,11 @@ else:
         ):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
 
 
@@ -3885,18 +5025,15 @@ else:
                 f"Wynik: {hist['wynik_biegu']}"
             )
 
-
             raport_swc.append(
                 f"Kolejność na mecie: "
                 f"{hist['szczegoly']}"
             )
 
-
             raport_swc.append(
                 f"Komentarz: "
                 f"{hist['komentarz']}"
             )
-
 
             raport_swc.append("")
 
@@ -3909,8 +5046,11 @@ else:
         for rep in range(1, 5):
 
             nazwa_rep = (
-                st.session_state.swc_reprezentacje[rep]
-                or f"Reprezentacja {rep}"
+                st.session_state.swc_reprezentacje[
+                    rep
+                ]
+                or
+                f"Reprezentacja {rep}"
             )
 
 
@@ -3952,13 +5092,15 @@ else:
 
                 for x in biegi:
 
-                    if str(x).startswith("3"):
+                    tekst = str(x)
+
+                    if tekst.startswith("3"):
                         pkt += 3
 
-                    elif str(x).startswith("2"):
+                    elif tekst.startswith("2"):
                         pkt += 2
 
-                    elif str(x).startswith("1"):
+                    elif tekst.startswith("1"):
                         pkt += 1
 
 
@@ -3966,14 +5108,25 @@ else:
                     f"Nr {nr} | "
                     f"{nazwa} | "
                     f"OVR "
-                    f"{st.session_state.get(f'swc_ovr_{rep}_{nr}', 60)} | "
+                    f"{st.session_state.get(
+                        f'swc_ovr_{rep}_{nr}',
+                        60
+                    )} | "
                     f"{pkt} pkt | "
                     f"Biegi: "
-                    f"{', '.join(map(str, biegi)) if biegi else '-'} | "
+                    f"{', '.join(
+                        map(str, biegi)
+                    ) if biegi else '-'} | "
                     f"Normalne: "
-                    f"{st.session_state.swc_normal_starts.get(klucz, 0)} | "
+                    f"{st.session_state.swc_normal_starts.get(
+                        klucz,
+                        0
+                    )} | "
                     f"RT: "
-                    f"{st.session_state.swc_rt.get(klucz, 0)} | "
+                    f"{st.session_state.swc_rt.get(
+                        klucz,
+                        0
+                    )} | "
                     f"Z/Z: NIE"
                 )
 
@@ -3988,12 +5141,14 @@ else:
             raport_swc_text,
             file_name="raport_swc.txt",
             mime="text/plain",
-            use_container_width=True
+            use_container_width=True,
+            key="download_raport_swc"
         )
 
 
         st.text_area(
             "📋 Cały raport SWC do skopiowania",
             raport_swc_text,
-            height=450
+            height=450,
+            key="raport_swc_text"
         )
