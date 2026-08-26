@@ -2418,28 +2418,43 @@ else:
         st.session_state.swc_pogoda = swc_pogoda
 
 
-    # --------------------------------------------------------
-    # NAZWY REPREZENTACJI
-    # --------------------------------------------------------
+   # ========================================================
+# NAZWY REPREZENTACJI SWC
+# ========================================================
 
-    if "swc_reprezentacje" not in st.session_state:
+if "swc_reprezentacje" not in st.session_state:
+    st.session_state.swc_reprezentacje = {
+        1: "",
+        2: "",
+        3: "",
+        4: ""
+    }
 
-        st.session_state.swc_reprezentacje = {
-            1: "🇵🇱 Polska",
-            2: "🇩🇰 Dania",
-            3: "🇸🇪 Szwecja",
-            4: "🇬🇧 Wielka Brytania"
-        }
 
+st.subheader("🌍 Reprezentacje")
 
-    st.header(
-        "🌍 Speedway World Cup — Reprezentacje"
-    )
+rep_cols = st.columns(4)
 
-    st.info(
-        "4 reprezentacje • 5 zawodników każda • "
-        "4 podstawowych + 1 rezerwowy • bez Z/Z"
-    )
+for rep in range(1, 5):
+
+    with rep_cols[rep - 1]:
+
+        klucz = f"swc_rep_name_{rep}"
+
+        if klucz not in st.session_state:
+            st.session_state[klucz] = (
+                st.session_state.swc_reprezentacje.get(rep, "")
+            )
+
+        st.text_input(
+            f"Reprezentacja {rep}",
+            key=klucz,
+            placeholder="Wpisz dowolny kraj"
+        )
+
+        st.session_state.swc_reprezentacje[rep] = (
+            st.session_state[klucz].strip()
+        )
 
 
     # --------------------------------------------------------
