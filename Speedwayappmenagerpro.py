@@ -16,7 +16,7 @@ st.title("🏁 Symulator Żużlowy PRO 2026")
 
 
 # ============================================================
-# 1. LISTA DRUŻYN
+# LISTA DRUŻYN
 # ============================================================
 
 druzyny_pge = [
@@ -59,10 +59,17 @@ kluby_lista = (
 
 
 # ============================================================
-# 2. POGODA
+# KASKI
 # ============================================================
 
-LISTA_POGODY = [
+KASKI = ["🔴", "⚪", "🔵", "🟡"]
+
+
+# ============================================================
+# POGODA
+# ============================================================
+
+POGODY = [
     "☀️ Słonecznie i ciepło",
     "⛅ Lekkie zachmurzenie",
     "🌬️ Wietrznie",
@@ -72,197 +79,266 @@ LISTA_POGODY = [
 
 
 def losuj_pogode():
-    return random.choice(LISTA_POGODY)
+    return random.choice(POGODY)
 
 
 # ============================================================
-# 3. FUNKCJE DRUŻYNOWE
+# PROGRAM LIGOWY
 # ============================================================
 
-def pobierz_ovr(nr, gospodarze=True):
-    if gospodarze:
-        return st.session_state.sklad_gospodarze_ovr.get(nr, 60)
+program_zawodow = [
 
-    return st.session_state.sklad_goscie_ovr.get(nr, 60)
+    {
+        "bieg": 1,
+        "A": 1, "B": 9, "C": 3, "D": 11,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 2,
+        "A": 6, "B": 14, "C": 7, "D": 15,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 3,
+        "A": 10, "B": 2, "C": 12, "D": 4,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 4,
+        "A": 13, "B": 5, "C": 14, "D": 6,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 5,
+        "A": 3, "B": 9, "C": 4, "D": 10,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 6,
+        "A": 11, "B": 1, "C": 12, "D": 7,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 7,
+        "A": 2, "B": 13, "C": 5, "D": 15,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 8,
+        "A": 10, "B": 4, "C": 11, "D": 6,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 9,
+        "A": 1, "B": 9, "C": 2, "D": 12,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 10,
+        "A": 14, "B": 3, "C": 13, "D": 5,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 11,
+        "A": 4, "B": 13, "C": 1, "D": 9,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 12,
+        "A": 15, "B": 7, "C": 10, "D": 3,
+        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+    },
+    {
+        "bieg": 13,
+        "A": 5, "B": 11, "C": 2, "D": 12,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 14,
+        "A": 3, "B": 11, "C": 4, "D": 12,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    },
+    {
+        "bieg": 15,
+        "A": 1, "B": 9, "C": 2, "D": 10,
+        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+    }
+]
 
+
+# ============================================================
+# FUNKCJE WSPÓLNE
+# ============================================================
 
 def pobierz_zawodnika(nr, gospodarze=True):
+
     if gospodarze:
         return st.session_state.sklad_gospodarze.get(nr, "")
 
     return st.session_state.sklad_goscie.get(nr, "")
 
 
-def get_ovr_info(nr, gospodarze=True):
-    zawodnik = pobierz_zawodnika(nr, gospodarze)
-    ovr = pobierz_ovr(nr, gospodarze)
+def pobierz_ovr(nr, gospodarze=True):
 
-    if not zawodnik:
-        return "-"
+    if gospodarze:
+        return st.session_state.sklad_gospodarze_ovr.get(nr, 60)
 
-    return f"{zawodnik} (OVR: {ovr})"
+    return st.session_state.sklad_goscie_ovr.get(nr, 60)
 
 
-def generuj_statystyki_zawodnikow():
-    baza = {}
+def losuj_statystyki_ovr(ovr):
 
-    for nr in range(1, 9):
+    odchylenie = random.randint(-2, 2)
 
-        nazwisko = st.session_state.sklad_gospodarze.get(nr, "")
-        ovr = st.session_state.sklad_gospodarze_ovr.get(nr, 60)
-
-        if nazwisko:
-
-            odchylenie = random.randint(-2, 2)
-
-            baza[f"g_{nr}"] = {
-                "nazwisko": nazwisko,
-                "ovr": ovr,
-                "start": max(50, min(99, ovr + odchylenie)),
-                "dystans": max(50, min(99, ovr - odchylenie)),
-                "forma": random.randint(-3, 3),
-                "rola": "junior" if nr in [6, 7] else "senior"
-            }
-
-    for nr in range(9, 17):
-
-        nazwisko = st.session_state.sklad_goscie.get(nr, "")
-        ovr = st.session_state.sklad_goscie_ovr.get(nr, 60)
-
-        if nazwisko:
-
-            odchylenie = random.randint(-2, 2)
-
-            baza[f"gosc_{nr}"] = {
-                "nazwisko": nazwisko,
-                "ovr": ovr,
-                "start": max(50, min(99, ovr + odchylenie)),
-                "dystans": max(50, min(99, ovr - odchylenie)),
-                "forma": random.randint(-3, 3),
-                "rola": "junior" if nr in [14, 15] else "senior"
-            }
-
-    return baza
+    return {
+        "ovr": ovr,
+        "start": max(1, min(99, ovr + odchylenie)),
+        "dystans": max(1, min(99, ovr - odchylenie)),
+        "forma": random.randint(-3, 3)
+    }
 
 
-def generuj_komentarz_sf(uczestnicy, zdarzenia):
+def sila_zawodnika(ovr, tryb_toru="neutralny", pogoda=""):
+
+    dane = losuj_statystyki_ovr(ovr)
+
+    if tryb_toru == "twardy":
+        waga_startu = 0.8
+        waga_dystansu = 0.2
+
+    elif tryb_toru == "przyczepny":
+        waga_startu = 0.3
+        waga_dystansu = 0.7
+
+    else:
+        waga_startu = 0.5
+        waga_dystansu = 0.5
+
+    if "Wietrznie" in pogoda:
+        losowy = 6
+
+    elif "Deszcz" in pogoda:
+        losowy = 6
+
+    elif "Burza" in pogoda:
+        losowy = 7
+
+    else:
+        losowy = 5
+
+    sila = (
+        dane["start"] * waga_startu
+        + dane["dystans"] * waga_dystansu
+        + dane["forma"]
+    )
+
+    if "Wietrznie" in pogoda:
+        sila -= 1
+
+    if "Deszcz" in pogoda:
+        sila -= 1
+
+    if "Burza" in pogoda:
+        sila -= 2
+
+    sila += random.uniform(-losowy, losowy)
+
+    return sila
+
+
+def komentarz_biegu(uczestnicy, zdarzenia):
 
     if zdarzenia:
-
         tekst = " ".join(zdarzenia)
 
         return random.choice([
-            f"Co za dramatyczne wydarzenia! {tekst}",
-            f"Sędzia przerywa bieg! {tekst}",
             f"Niesamowite zamieszanie na torze. {tekst}",
-            f"Na torze dzieje się bardzo dużo! {tekst}"
+            f"Sędzia przerywa bieg! {tekst}",
+            f"Na torze dzieje się bardzo dużo! {tekst}",
+            f"Co za dramatyczne wydarzenia! {tekst}"
         ])
 
     if not uczestnicy:
-        return "Bieg bez historii."
+        return "Bieg bez historii — nikt nie dojechał do mety."
 
     zwyciezca = uczestnicy[0]["nazwisko"]
-    drugi = uczestnicy[1]["nazwisko"] if len(uczestnicy) > 1 else None
 
-    roznica = (
-        uczestnicy[0]["sila"] - uczestnicy[1]["sila"]
-        if drugi
-        else 100
+    drugi = (
+        uczestnicy[1]["nazwisko"]
+        if len(uczestnicy) > 1
+        else None
     )
+
+    trzeci = (
+        uczestnicy[2]["nazwisko"]
+        if len(uczestnicy) > 2
+        else None
+    )
+
+    if drugi:
+        roznica = (
+            uczestnicy[0]["sila"]
+            - uczestnicy[1]["sila"]
+        )
+    else:
+        roznica = 100
 
     if (
         drugi
-        and uczestnicy[0]["druzyna"] == uczestnicy[1]["druzyna"]
+        and uczestnicy[0]["druzyna"]
+        == uczestnicy[1]["druzyna"]
     ):
-
         return random.choice([
-            f"🔥 Pojedynek parowy perfekcyjny! {zwyciezca} i {drugi} wygrywają podwójnie.",
-            f"🚀 Para jak z żelaza! {zwyciezca} prowadził, a {drugi} kontrolował rywali.",
-            f"💥 Nokaut! Świetna jazda duetu {zwyciezca} - {drugi}."
+            f"🔥 Pojedynek parowy perfekcyjny! "
+            f"{zwyciezca} i {drugi} wystrzelili spod taśmy i nie dali rywalom szans.",
+            f"🚀 Para jak z żelaza! {zwyciezca} prowadził bieg, "
+            f"a {drugi} skutecznie blokował rywali.",
+            f"💥 Nokaut! Pokaz jazdy parą w wykonaniu duetu "
+            f"{zwyciezca} - {drugi}."
+        ])
+
+    if (
+        drugi
+        and trzeci
+        and uczestnicy[0]["druzyna"]
+        != uczestnicy[1]["druzyna"]
+        and uczestnicy[1]["druzyna"]
+        == uczestnicy[2]["druzyna"]
+    ):
+        return random.choice([
+            f"⚖️ Remis po twardej walce! {zwyciezca} wygrywa bieg, "
+            f"ale {drugi} i {trzeci} dowożą punkty.",
+            f"🎯 Samotny jastrząb! {zwyciezca} uciekł rywalom, "
+            f"a para {drugi}, {trzeci} kontrolowała dalsze pozycje."
         ])
 
     if drugi and roznica < 1.5:
-
         return random.choice([
-            f"😱 NIESAMOWITE! {zwyciezca} wygrywa z {drugim} dosłownie na kresce!",
+            f"😱 NIESAMOWITE! {zwyciezca} wyprzedza zawodnika "
+            f"{drugi} dosłownie na kresce!",
             f"⚔️ Walka łokcie w łokcie! {zwyciezca} wyrywa zwycięstwo!",
             f"🔥 Co za mijanka! {zwyciezca} atakuje do samej mety!"
         ])
 
     if roznica > 6:
-
         return random.choice([
-            f"⚡ Błyskawica od startu! {zwyciezca} odjechał rywalom.",
-            f"🎯 Poza zasięgiem! {zwyciezca} był zdecydowanie najlepszy.",
-            f"👑 Profesor toru! {zwyciezca} idealnie dopasował sprzęt."
+            f"⚡ Błyskawica od startu! {zwyciezca} zdemolował rywali.",
+            f"🎯 Poza zasięgiem! {zwyciezca} założył całą stawkę.",
+            f"👑 Profesor toru! {zwyciezca} dopasował przełożenia idealnie."
         ])
 
     return random.choice([
-        f"🏍️ Zacięty bieg! {zwyciezca} utrzymał prowadzenie.",
-        f"💨 Kąśliwe ataki na dystansie! {zwyciezca} dowozi zwycięstwo.",
-        f"🏁 Twarda walka o punkty! {zwyciezca} wygrywa bieg."
+        f"🏍️ Zacięty bieg! {zwyciezca} utrzymał prowadzenie przed atakami {drugi}.",
+        f"💨 Kąśliwe ataki na dystansie! {drugi} szukał prędkości.",
+        f"🏁 Twarda walka o punkty! {zwyciezca} wygrywa start."
     ])
 
 
 # ============================================================
-# 4. PROGRAM MECZU DRUŻYNOWEGO
+# INICJALIZACJA LIGI
 # ============================================================
 
-program_zawodow = [
-
-    {"bieg": 1, "A": 1, "B": 9, "C": 3, "D": 11,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 2, "A": 6, "B": 14, "C": 7, "D": 15,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 3, "A": 10, "B": 2, "C": 12, "D": 4,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 4, "A": 13, "B": 5, "C": 14, "D": 6,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 5, "A": 3, "B": 9, "C": 4, "D": 10,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 6, "A": 11, "B": 1, "C": 12, "D": 7,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 7, "A": 2, "B": 13, "C": 5, "D": 15,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 8, "A": 10, "B": 4, "C": 11, "D": 6,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 9, "A": 1, "B": 9, "C": 2, "D": 12,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 10, "A": 14, "B": 3, "C": 13, "D": 5,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 11, "A": 4, "B": 13, "C": 1, "D": 9,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 12, "A": 15, "B": 7, "C": 10, "D": 3,
-     "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}},
-
-    {"bieg": 13, "A": 5, "B": 11, "C": 2, "D": 12,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 14, "A": 3, "B": 11, "C": 4, "D": 12,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}},
-
-    {"bieg": 15, "A": 1, "B": 9, "C": 2, "D": 10,
-     "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
-    }
-]
-
-
-# ============================================================
-# 5. INICJALIZACJA MECZU
-# ============================================================
-
-def inicjalizuj_sklad():
+def inicjalizuj_lige():
 
     if "sklad_gospodarze" not in st.session_state:
         st.session_state.sklad_gospodarze = {
@@ -284,1174 +360,20 @@ def inicjalizuj_sklad():
             nr: 60 for nr in range(9, 17)
         }
 
+    if "gospodarz_biezacy" not in st.session_state:
+        st.session_state.gospodarz_biezacy = kluby_lista[0]
 
-inicjalizuj_sklad()
+    if "gosc_biezacy" not in st.session_state:
+        st.session_state.gosc_biezacy = kluby_lista[1]
 
+    if "pogoda_ligowa" not in st.session_state:
+        st.session_state.pogoda_ligowa = POGODY[0]
 
-# ============================================================
-# 6. FUNKCJE RAPORTU
-# ============================================================
+    if "current_heat" not in st.session_state:
+        reset_ligi()
 
-def raport_meczu():
 
-    tekst = []
-
-    tekst.append("🏁 RAPORT MECZU ŻUŻLOWEGO")
-    tekst.append("=" * 50)
-    tekst.append(
-        f"{st.session_state.mecz_gospodarz} "
-        f"{st.session_state.score_gosp}:"
-        f"{st.session_state.score_gosc} "
-        f"{st.session_state.mecz_gosc}"
-    )
-
-    tekst.append(
-        f"Pogoda: {st.session_state.get('pogoda_mecz', '-')}"
-    )
-
-    tekst.append("")
-    tekst.append("BIEG PO BIEGU")
-    tekst.append("-" * 50)
-
-    for hist in st.session_state.get("match_history", []):
-
-        tekst.append(
-            f"Bieg {hist['bieg']}: "
-            f"{hist['wynik_biegu']}"
-        )
-
-        tekst.append(
-            f"  {hist['szczegoly']}"
-        )
-
-        tekst.append(
-            f"  Komentarz: {hist['komentarz']}"
-        )
-
-    tekst.append("")
-    tekst.append("PUNKTY ZAWODNIKÓW")
-    tekst.append("-" * 50)
-
-    for sklad, prefix in [
-        (st.session_state.sklad_gospodarze, "GOSPODARZ"),
-        (st.session_state.sklad_goscie, "GOŚĆ")
-    ]:
-
-        tekst.append(prefix)
-
-        for nr, zawodnik in sklad.items():
-
-            if not zawodnik:
-                continue
-
-            biegi = st.session_state.rider_heats.get(nr, [])
-
-            pkt = 0
-
-            for wynik in biegi:
-
-                if str(wynik).startswith("3"):
-                    pkt += 3
-                elif str(wynik).startswith("2"):
-                    pkt += 2
-                elif str(wynik).startswith("1"):
-                    pkt += 1
-
-            bonus = st.session_state.rider_bonuses.get(nr, 0)
-
-            tekst.append(
-                f"{nr}. {zawodnik}: "
-                f"{pkt}+{bonus} "
-                f"({', '.join(map(str, biegi))})"
-            )
-
-    return "\n".join(tekst)
-
-
-# ============================================================
-# 7. ZAWODY INDYWIDUALNE
-# ============================================================
-
-def inicjalizuj_zawody_indywidualne():
-
-    if "indi_zawodnicy" not in st.session_state:
-
-        st.session_state.indi_zawodnicy = {
-            nr: {
-                "name": "",
-                "ovr": 60,
-                "narodowosc": "Polska",
-                "status": "Senior"
-            }
-            for nr in range(1, 19)
-        }
-
-    if "indi_heat" not in st.session_state:
-        st.session_state.indi_heat = 0
-
-    if "indi_stage" not in st.session_state:
-        st.session_state.indi_stage = "main"
-
-    if "indi_history" not in st.session_state:
-        st.session_state.indi_history = []
-
-    if "indi_points" not in st.session_state:
-        st.session_state.indi_points = {
-            nr: 0 for nr in range(1, 19)
-        }
-
-    if "indi_baza" not in st.session_state:
-        st.session_state.indi_baza = {}
-
-    if "indi_pogoda" not in st.session_state:
-        st.session_state.indi_pogoda = "☀️ Słonecznie i ciepło"
-
-    if "indi_format" not in st.session_state:
-        st.session_state.indi_format = "🌍 SGP — Grand Prix"
-
-    if "indi_finished" not in st.session_state:
-        st.session_state.indi_finished = False
-
-    if "indi_lcq" not in st.session_state:
-        st.session_state.indi_lcq = {
-            "LCQ1": [],
-            "LCQ2": []
-        }
-
-    if "indi_finalists" not in st.session_state:
-        st.session_state.indi_finalists = []
-
-    if "indi_final_result" not in st.session_state:
-        st.session_state.indi_final_result = []
-
-    if "indi_starty" not in st.session_state:
-        st.session_state.indi_starty = {
-            nr: [] for nr in range(1, 19)
-        }
-
-
-inicjalizuj_zawody_indywidualne()
-
-
-# ============================================================
-# 8. FORMATY INDYWIDUALNE
-# ============================================================
-
-FORMATY_INDYWIDUALNE = [
-    "🌍 SGP — Grand Prix",
-    "🇵🇱 IMP — Indywidualne Mistrzostwa Polski",
-    "🏆 Złoty Kask"
-]
-
-
-def reset_indywidualnych():
-
-    st.session_state.indi_heat = 0
-    st.session_state.indi_stage = "main"
-
-    st.session_state.indi_history = []
-
-    st.session_state.indi_points = {
-        nr: 0 for nr in range(1, 19)
-    }
-
-    st.session_state.indi_starty = {
-        nr: [] for nr in range(1, 19)
-    }
-
-    st.session_state.indi_baza = {}
-
-    st.session_state.indi_finished = False
-
-    st.session_state.indi_lcq = {
-        "LCQ1": [],
-        "LCQ2": []
-    }
-
-    st.session_state.indi_finalists = []
-    st.session_state.indi_final_result = []
-
-    st.session_state.indi_pogoda = losuj_pogode()
-
-
-def aktywni_zawodnicy():
-
-    return [
-        nr
-        for nr, dane in st.session_state.indi_zawodnicy.items()
-        if dane["name"].strip()
-    ]
-
-
-def generuj_indi_baze():
-
-    baza = {}
-
-    for nr in aktywni_zawodnicy():
-
-        dane = st.session_state.indi_zawodnicy[nr]
-
-        ovr = dane["ovr"]
-
-        odchylenie = random.randint(-2, 2)
-
-        baza[nr] = {
-            "start": max(50, min(99, ovr + odchylenie)),
-            "dystans": max(50, min(99, ovr - odchylenie)),
-            "forma": random.randint(-3, 3)
-        }
-
-    st.session_state.indi_baza = baza
-
-
-# ============================================================
-# 9. TABELA 20-BIEGOWA INDYWIDUALNA
-# ============================================================
-
-TABELA_20 = [
-    (1, 9, 13, 5),
-    (14, 6, 2, 10),
-    (11, 3, 15, 7),
-    (4, 12, 8, 16),
-
-    (9, 1, 5, 13),
-    (6, 14, 10, 2),
-    (3, 11, 7, 15),
-    (12, 4, 16, 8),
-
-    (1, 10, 13, 6),
-    (14, 2, 5, 11),
-    (7, 3, 15, 12),
-    (4, 16, 8, 9),
-
-    (13, 7, 1, 15),
-    (2, 12, 10, 5),
-    (11, 8, 6, 3),
-    (4, 9, 14, 16),
-
-    (1, 11, 5, 15),
-    (13, 2, 7, 10),
-    (6, 12, 3, 14),
-    (8, 16, 9, 4)
-]
-
-
-# ============================================================
-# 10. SIŁA ZAWODNIKA INDYWIDUALNEGO
-# ============================================================
-
-def sila_indi(nr):
-
-    dane = st.session_state.indi_zawodnicy[nr]
-
-    if nr not in st.session_state.indi_baza:
-        st.session_state.indi_baza[nr] = {
-            "start": dane["ovr"],
-            "dystans": dane["ovr"],
-            "forma": 0
-        }
-
-    baza = st.session_state.indi_baza[nr]
-
-    pogoda = st.session_state.indi_pogoda
-
-    if "Twardy" in st.session_state.get(
-        "indi_tor",
-        "⚖️ Tor Neutralny"
-    ):
-
-        waga_startu = 0.8
-        waga_dystansu = 0.2
-
-    elif "Przyczepny" in st.session_state.get(
-        "indi_tor",
-        "⚖️ Tor Neutralny"
-    ):
-
-        waga_startu = 0.3
-        waga_dystansu = 0.7
-
-    else:
-
-        waga_startu = 0.5
-        waga_dystansu = 0.5
-
-    kara = 0
-
-    if "Wietrznie" in pogoda:
-        kara = 1
-
-    elif "Deszcz" in pogoda:
-        waga_startu *= 0.9
-        waga_dystansu *= 1.1
-        kara = 1
-
-    elif "Burza" in pogoda:
-        waga_startu *= 0.85
-        waga_dystansu *= 1.05
-        kara = 2
-
-    sila = (
-        baza["start"] * waga_startu
-        + baza["dystans"] * waga_dystansu
-        + baza["forma"]
-        - kara
-    )
-
-    sila += random.uniform(-5, 5)
-
-    return sila
-
-
-# ============================================================
-# 11. SYMULACJA BIEGU INDYWIDUALNEGO
-# ============================================================
-
-def symuluj_bieg_indi(numery, nazwa_biegu):
-
-    uczestnicy = []
-
-    for nr in numery:
-
-        if nr not in st.session_state.indi_zawodnicy:
-            continue
-
-        dane = st.session_state.indi_zawodnicy[nr]
-
-        if not dane["name"].strip():
-            continue
-
-        uczestnicy.append({
-            "nr": nr,
-            "name": dane["name"],
-            "ovr": dane["ovr"],
-            "sila": sila_indi(nr),
-            "status": None,
-            "pkt": 0
-        })
-
-    zdarzenia = []
-
-    for zawodnik in uczestnicy:
-
-        los = random.random()
-
-        if los < 0.025:
-
-            zawodnik["status"] = "D"
-            zawodnik["sila"] = -100
-
-            zdarzenia.append(
-                f"💨 Defekt: {zawodnik['name']}"
-            )
-
-        elif los < 0.055:
-
-            zawodnik["status"] = "U"
-            zawodnik["sila"] = -200
-
-            zdarzenia.append(
-                f"💥 Upadek: {zawodnik['name']}"
-            )
-
-        elif los < 0.075:
-
-            zawodnik["status"] = "W"
-            zawodnik["sila"] = -300
-
-            zdarzenia.append(
-                f"🚫 Wykluczenie: {zawodnik['name']}"
-            )
-
-    uczestnicy.sort(
-        key=lambda x: x["sila"],
-        reverse=True
-    )
-
-    punkty = [3, 2, 1, 0]
-
-    for i, zawodnik in enumerate(uczestnicy):
-
-        if zawodnik["status"] is None:
-
-            zawodnik["pkt"] = punkty[i] if i < 4 else 0
-
-        else:
-
-            zawodnik["pkt"] = 0
-
-    for zawodnik in uczestnicy:
-
-        nr = zawodnik["nr"]
-
-        st.session_state.indi_points[nr] += zawodnik["pkt"]
-
-        st.session_state.indi_starty[nr].append(
-            zawodnik["pkt"]
-            if zawodnik["status"] is None
-            else zawodnik["status"]
-        )
-
-    wynik = []
-
-    for i, zawodnik in enumerate(uczestnicy):
-
-        pozycja = i + 1
-
-        if zawodnik["status"]:
-
-            wynik.append(
-                f"{pozycja}. "
-                f"{zawodnik['name']} "
-                f"({zawodnik['status']}) - 0"
-            )
-
-        else:
-
-            wynik.append(
-                f"{pozycja}. "
-                f"{zawodnik['name']} - "
-                f"{zawodnik['pkt']}"
-            )
-
-    st.session_state.indi_history.append({
-        "bieg": nazwa_biegu,
-        "wynik": wynik,
-        "zdarzenia": zdarzenia
-    })
-
-
-# ============================================================
-# 12. KLASYFIKACJA INDYWIDUALNA
-# ============================================================
-
-def klasyfikacja_indi():
-
-    zawodnicy = aktywni_zawodnicy()
-
-    dane = []
-
-    for nr in zawodnicy:
-
-        starty = st.session_state.indi_starty.get(nr, [])
-
-        pkt = st.session_state.indi_points.get(nr, 0)
-
-        zwyciestwa = sum(
-            1
-            for x in starty
-            if str(x) == "3"
-        )
-
-        drugie = sum(
-            1
-            for x in starty
-            if str(x) == "2"
-        )
-
-        trzecie = sum(
-            1
-            for x in starty
-            if str(x) == "1"
-        )
-
-        dane.append({
-            "Nr": nr,
-            "Zawodnik": st.session_state.indi_zawodnicy[nr]["name"],
-            "OVR": st.session_state.indi_zawodnicy[nr]["ovr"],
-            "Kraj": st.session_state.indi_zawodnicy[nr]["narodowosc"],
-            "Pkt": pkt,
-            "3": zwyciestwa,
-            "2": drugie,
-            "1": trzecie,
-            "Starty": len(starty),
-            "Biegi": ", ".join(map(str, starty))
-        })
-
-    df = pd.DataFrame(dane)
-
-    if not df.empty:
-
-        df = df.sort_values(
-            by=["Pkt", "3", "2", "1"],
-            ascending=[False, False, False, False]
-        ).reset_index(drop=True)
-
-        df.insert(
-            0,
-            "Poz.",
-            range(1, len(df) + 1)
-        )
-
-    return df
-
-
-# ============================================================
-# 13. RAPORT ZAWODÓW INDYWIDUALNYCH
-# ============================================================
-
-def raport_indi():
-
-    tekst = []
-
-    tekst.append("🏁 RAPORT ZAWODÓW INDYWIDUALNYCH")
-    tekst.append("=" * 55)
-
-    tekst.append(
-        f"Format: {st.session_state.indi_format}"
-    )
-
-    tekst.append(
-        f"Pogoda: {st.session_state.indi_pogoda}"
-    )
-
-    tekst.append("")
-
-    tekst.append("BIEGI")
-    tekst.append("-" * 55)
-
-    for hist in st.session_state.indi_history:
-
-        tekst.append(
-            f"\n{hist['bieg']}"
-        )
-
-        for wynik in hist["wynik"]:
-
-            tekst.append(
-                f"  {wynik}"
-            )
-
-        if hist["zdarzenia"]:
-
-            for zdarzenie in hist["zdarzenia"]:
-
-                tekst.append(
-                    f"  {zdarzenie}"
-                )
-
-    tekst.append("")
-    tekst.append("KLASYFIKACJA")
-    tekst.append("-" * 55)
-
-    df = klasyfikacja_indi()
-
-    for _, row in df.iterrows():
-
-        tekst.append(
-            f"{row['Poz.']}. "
-            f"{row['Zawodnik']} — "
-            f"{row['Pkt']} pkt"
-        )
-
-    return "\n".join(tekst)
-
-
-# ============================================================
-# 14. OBSŁUGA FAZY SGP
-# ============================================================
-
-def uruchom_sgp():
-
-    if st.session_state.indi_heat < 20:
-
-        indeks = st.session_state.indi_heat
-
-        obsada = TABELA_20[indeks]
-
-        obsada = [
-            nr
-            for nr in obsada
-            if nr in aktywni_zawodnicy()
-        ]
-
-        if len(obsada) < 4:
-
-            st.error(
-                "Do pełnej obsady SGP potrzebnych jest 16 zawodników."
-            )
-
-            return
-
-        st.subheader(
-            f"🚦 Bieg {indeks + 1} / 20"
-        )
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(obsada):
-
-            with cols[i]:
-
-                st.markdown(
-                    f"**{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}**"
-                )
-
-                st.caption(
-                    f"OVR {st.session_state.indi_zawodnicy[nr]['ovr']}"
-                )
-
-        if st.button(
-            "🏁 Jedź bieg",
-            key=f"indi_sgp_heat_{indeks}",
-            use_container_width=True
-        ):
-
-            symuluj_bieg_indi(
-                obsada,
-                f"Bieg {indeks + 1}"
-            )
-
-            st.session_state.indi_heat += 1
-
-            st.rerun()
-
-        return
-
-    # --------------------------------------------------------
-    # PO 20 BIEGACH
-    # --------------------------------------------------------
-
-    df = klasyfikacja_indi()
-
-    st.subheader(
-        "📊 Klasyfikacja po 20 biegach"
-    )
-
-    st.dataframe(
-        df,
-        hide_index=True,
-        use_container_width=True
-    )
-
-    if st.session_state.indi_stage == "main":
-
-        if len(df) < 16:
-
-            st.error(
-                "SGP wymaga dokładnie 16 zawodników."
-            )
-
-            return
-
-        top10 = list(
-            df["Nr"].head(10)
-        )
-
-        top2 = top10[:2]
-
-        pozostali = top10[2:]
-
-        random.shuffle(pozostali)
-
-        lcq1 = pozostali[:4]
-        lcq2 = pozostali[4:8]
-
-        st.session_state.indi_lcq["LCQ1"] = lcq1
-        st.session_state.indi_lcq["LCQ2"] = lcq2
-
-        st.session_state.indi_finalists = top2.copy()
-
-        st.session_state.indi_stage = "lcq"
-
-        st.rerun()
-
-    if st.session_state.indi_stage == "lcq":
-
-        st.subheader(
-            "🔥 Last Chance Qualifiers"
-        )
-
-        lcq = st.session_state.indi_lcq
-
-        for nazwa, lista in [
-            ("LCQ1", lcq["LCQ1"]),
-            ("LCQ2", lcq["LCQ2"])
-        ]:
-
-            st.markdown(f"### {nazwa}")
-
-            cols = st.columns(4)
-
-            for i, nr in enumerate(lista):
-
-                with cols[i]:
-
-                    st.write(
-                        f"{i + 1}. "
-                        f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                    )
-
-            if st.button(
-                f"🏁 Jedź {nazwa}",
-                key=f"jedz_{nazwa}"
-            ):
-
-                temp_start = dict(
-                    st.session_state.indi_starty
-                )
-
-                temp_points = dict(
-                    st.session_state.indi_points
-                )
-
-                historia_before = len(
-                    st.session_state.indi_history
-                )
-
-                symuluj_bieg_indi(
-                    lista,
-                    nazwa
-                )
-
-                hist = st.session_state.indi_history[-1]
-
-                zwyciezca_name = hist["wynik"][0]
-
-                zwyciezca = None
-
-                for nr in lista:
-
-                    if (
-                        st.session_state.indi_zawodnicy[nr]["name"]
-                        in zwyciezca_name
-                    ):
-
-                        zwyciezca = nr
-                        break
-
-                if zwyciezca is not None:
-                    st.session_state.indi_finalists.append(
-                        zwyciezca
-                    )
-
-                if nazwa == "LCQ2":
-
-                    st.session_state.indi_stage = "sgp_final"
-
-                st.rerun()
-
-
-    elif st.session_state.indi_stage == "sgp_final":
-
-        st.subheader("🏆 FINAŁ SGP")
-
-        finalisci = st.session_state.indi_finalists[:4]
-
-        if len(finalisci) < 4:
-
-            st.warning(
-                "Finał wymaga czterech zawodników."
-            )
-
-            return
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(finalisci):
-
-            with cols[i]:
-
-                st.write(
-                    f"{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                )
-
-        if st.button(
-            "🏁 Jedź FINAŁ",
-            key="sgp_final"
-        ):
-
-            symuluj_bieg_indi(
-                finalisci,
-                "FINAŁ SGP"
-            )
-
-            st.session_state.indi_stage = "finished"
-            st.session_state.indi_finished = True
-
-            st.rerun()
-
-
-# ============================================================
-# 15. OBSŁUGA IMP
-# ============================================================
-
-def uruchom_imp():
-
-    if st.session_state.indi_heat < 20:
-
-        indeks = st.session_state.indi_heat
-
-        obsada = TABELA_20[indeks]
-
-        if len(aktywni_zawodnicy()) < 16:
-
-            st.error(
-                "IMP wymaga 16 zawodników."
-            )
-
-            return
-
-        st.subheader(
-            f"🚦 Bieg {indeks + 1} / 20"
-        )
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(obsada):
-
-            with cols[i]:
-
-                st.write(
-                    f"{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                )
-
-        if st.button(
-            "🏁 Jedź bieg",
-            key=f"imp_heat_{indeks}",
-            use_container_width=True
-        ):
-
-            symuluj_bieg_indi(
-                obsada,
-                f"Bieg {indeks + 1}"
-            )
-
-            st.session_state.indi_heat += 1
-
-            st.rerun()
-
-        return
-
-    df = klasyfikacja_indi()
-
-    st.subheader(
-        "📊 Klasyfikacja po 20 biegach"
-    )
-
-    st.dataframe(
-        df,
-        hide_index=True,
-        use_container_width=True
-    )
-
-    if st.session_state.indi_stage == "main":
-
-        top6 = list(
-            df["Nr"].head(6)
-        )
-
-        st.session_state.imp_semifinal = top6
-
-        st.session_state.indi_stage = "imp_semifinal"
-
-        st.rerun()
-
-    elif st.session_state.indi_stage == "imp_semifinal":
-
-        zawodnicy = st.session_state.imp_semifinal
-
-        st.subheader(
-            "🔥 Półfinał IMP"
-        )
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(zawodnicy[:4]):
-
-            with cols[i]:
-
-                st.write(
-                    f"{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                )
-
-        if st.button(
-            "🏁 Jedź półfinał IMP",
-            key="imp_semi"
-        ):
-
-            symuluj_bieg_indi(
-                zawodnicy[:4],
-                "Półfinał IMP"
-            )
-
-            hist = st.session_state.indi_history[-1]
-
-            zwyciezca = None
-            drugi = None
-
-            for nr in zawodnicy[:4]:
-
-                name = st.session_state.indi_zawodnicy[nr]["name"]
-
-                if name in hist["wynik"][0]:
-                    zwyciezca = nr
-
-                if len(hist["wynik"]) > 1:
-                    if name in hist["wynik"][1]:
-                        drugi = nr
-
-            finalisci = [
-                zawodnicy[0],
-                zawodnicy[1]
-            ]
-
-            if zwyciezca is not None:
-                finalisci.append(zwyciezca)
-
-            if drugi is not None:
-                finalisci.append(drugi)
-
-            finalisci = list(dict.fromkeys(finalisci))[:4]
-
-            st.session_state.imp_finalisci = finalisci
-
-            st.session_state.indi_stage = "imp_final"
-
-            st.rerun()
-
-    elif st.session_state.indi_stage == "imp_final":
-
-        finalisci = st.session_state.imp_finalisci
-
-        st.subheader(
-            "🏆 FINAŁ IMP"
-        )
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(finalisci):
-
-            with cols[i]:
-
-                st.write(
-                    f"{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                )
-
-        if st.button(
-            "🏁 Jedź FINAŁ IMP",
-            key="imp_final"
-        ):
-
-            symuluj_bieg_indi(
-                finalisci,
-                "FINAŁ IMP"
-            )
-
-            st.session_state.indi_stage = "finished"
-            st.session_state.indi_finished = True
-
-            st.rerun()
-
-
-# ============================================================
-# 16. OBSŁUGA ZŁOTEGO KASKU
-# ============================================================
-
-def uruchom_zloty_kask():
-
-    if len(aktywni_zawodnicy()) < 16:
-
-        st.error(
-            "Złoty Kask wymaga 16 zawodników."
-        )
-
-        return
-
-    if st.session_state.indi_heat < 20:
-
-        indeks = st.session_state.indi_heat
-
-        obsada = TABELA_20[indeks]
-
-        st.subheader(
-            f"🚦 Bieg {indeks + 1} / 20"
-        )
-
-        cols = st.columns(4)
-
-        for i, nr in enumerate(obsada):
-
-            with cols[i]:
-
-                st.write(
-                    f"{i + 1}. "
-                    f"{st.session_state.indi_zawodnicy[nr]['name']}"
-                )
-
-        if st.button(
-            "🏁 Jedź bieg",
-            key=f"zk_heat_{indeks}",
-            use_container_width=True
-        ):
-
-            symuluj_bieg_indi(
-                obsada,
-                f"Bieg {indeks + 1}"
-            )
-
-            st.session_state.indi_heat += 1
-
-            st.rerun()
-
-        return
-
-    st.subheader(
-        "🏆 KONIEC ZAWODÓW — ZŁOTY KASK"
-    )
-
-    df = klasyfikacja_indi()
-
-    st.dataframe(
-        df,
-        hide_index=True,
-        use_container_width=True
-    )
-
-    if not st.session_state.indi_finished:
-
-        if len(df) >= 2:
-
-            pierwsze = df.iloc[0]
-            drugie = df.iloc[1]
-
-            if pierwsze["Pkt"] == drugie["Pkt"]:
-
-                st.warning(
-                    "Remis na pierwszym miejscu. "
-                    "Możesz rozegrać bieg dodatkowy."
-                )
-
-                if st.button(
-                    "🏁 Bieg dodatkowy o Złoty Kask",
-                    key="zk_runoff"
-                ):
-
-                    numery = [
-                        int(pierwsze["Nr"]),
-                        int(drugie["Nr"])
-                    ]
-
-                    symuluj_bieg_indi(
-                        numery,
-                        "Bieg dodatkowy"
-                    )
-
-                    st.session_state.indi_finished = True
-
-                    st.rerun()
-
-            else:
-
-                st.session_state.indi_finished = True
-
-
-# ============================================================
-# 17. GŁÓWNY SIDEBAR
-# ============================================================
-
-st.sidebar.header(
-    "⚙️ Konfiguracja"
-)
-
-
-# ============================================================
-# 18. WYBÓR DRUŻYN
-# ============================================================
-
-if (
-    "gospodarz_bieżący" not in st.session_state
-    or st.session_state.gospodarz_bieżący not in kluby_lista
-):
-
-    st.session_state.gospodarz_bieżący = kluby_lista[0]
-
-
-if (
-    "gosc_bieżący" not in st.session_state
-    or st.session_state.gosc_bieżący not in kluby_lista
-):
-
-    st.session_state.gosc_bieżący = kluby_lista[1]
-
-
-wybrany_gospodarz = st.sidebar.selectbox(
-    "🏠 Gospodarz",
-    kluby_lista,
-    index=kluby_lista.index(
-        st.session_state.gospodarz_bieżący
-    ),
-    key="gospodarz_bieżący"
-)
-
-
-wybrany_gosc = st.sidebar.selectbox(
-    "✈️ Gość",
-    kluby_lista,
-    index=kluby_lista.index(
-        st.session_state.gosc_bieżący
-    ),
-    key="gosc_bieżący"
-)
-
-
-# ============================================================
-# 19. POGODA MECZU
-# ============================================================
-
-tryb_pogody_mecz = st.sidebar.selectbox(
-    "🌤️ Pogoda meczu",
-    [
-        "☀️ Słonecznie i ciepło",
-        "⛅ Lekkie zachmurzenie",
-        "🌬️ Wietrznie",
-        "🌧️ Deszcz (Mżawka)",
-        "🌩️ Burza / Ulewa",
-        "🎲 Losowa pogoda"
-    ],
-    key="wybor_pogody_mecz"
-)
-
-
-if tryb_pogody_mecz == "🎲 Losowa pogoda":
-
-    if (
-        "pogoda_mecz" not in st.session_state
-        or st.session_state.get("wylosowana_pogoda_przelaczona")
-        is not True
-    ):
-
-        st.session_state.pogoda_mecz = losuj_pogode()
-        st.session_state.wylosowana_pogoda_przelaczona = True
-
-else:
-
-    st.session_state.pogoda_mecz = tryb_pogody_mecz
-    st.session_state.wylosowana_pogoda_przelaczona = False
-
-
-wybrana_pogoda = st.session_state.pogoda_mecz
-
-
-# ============================================================
-# 20. RESET MECZU PO ZMIANIE DRUŻYN
-# ============================================================
-
-if (
-    st.session_state.get("mecz_gospodarz")
-    != wybrany_gospodarz
-    or
-    st.session_state.get("mecz_gosc")
-    != wybrany_gosc
-):
-
-    st.session_state.mecz_gospodarz = wybrany_gospodarz
-    st.session_state.mecz_gosc = wybrany_gosc
+def reset_ligi():
 
     st.session_state.current_heat = 0
     st.session_state.score_gosp = 0
@@ -1490,431 +412,1225 @@ if (
     st.session_state.mecz_przerwany = False
     st.session_state.decyzja_o_przerwaniu_podjeta = False
 
-    st.session_state.sklad_gospodarze = {
-        nr: "" for nr in range(1, 9)
-    }
-
-    st.session_state.sklad_goscie = {
-        nr: "" for nr in range(9, 17)
-    }
-
-    st.session_state.sklad_gospodarze_ovr = {
-        nr: 60 for nr in range(1, 9)
-    }
-
-    st.session_state.sklad_goscie_ovr = {
-        nr: 60 for nr in range(9, 17)
-    }
-
     st.session_state.baza_zawodnikow = {}
 
-    st.rerun()
+
+inicjalizuj_lige()
 
 
 # ============================================================
-# 21. GŁÓWNE ZAKŁADKI
+# RESET TURNIEJU INDYWIDUALNEGO
 # ============================================================
 
-tab_kadry, tab_taktyka, tab_mecz, tab_indi = st.tabs(
+def reset_indywidualne():
+
+    st.session_state.ind_current_heat = 0
+    st.session_state.ind_history = []
+    st.session_state.ind_points = {
+        nr: 0 for nr in range(1, 21)
+    }
+
+    st.session_state.ind_bonuses = {
+        nr: 0 for nr in range(1, 21)
+    }
+
+    st.session_state.ind_starts = {
+        nr: 0 for nr in range(1, 21)
+    }
+
+    st.session_state.ind_heats = {
+        nr: [] for nr in range(1, 21)
+    }
+
+    st.session_state.ind_finished = False
+    st.session_state.ind_stage = "heats"
+
+
+if "ind_current_heat" not in st.session_state:
+    reset_indywidualne()
+
+
+# ============================================================
+# TRYB APLIKACJI
+# ============================================================
+
+tryb = st.sidebar.radio(
+    "🏁 Tryb symulatora",
     [
-        "👥 1. Kadry",
-        "📣 2. Taktyka",
-        "🏎️ 3. Mecz Drużynowy",
-        "🏆 4. Zawody Indywidualne"
+        "🏟️ Mecz ligowy",
+        "🏆 Zawody indywidualne"
     ]
 )
 
 
 # ============================================================
-# 22. KADRY
+# WSPÓLNY SIDEBAR - POGODA
 # ============================================================
 
-with tab_kadry:
+if tryb == "🏟️ Mecz ligowy":
 
-    st.header(
-        f"{wybrany_gospodarz} vs {wybrany_gosc}"
+    st.sidebar.header("⚙️ Konfiguracja Meczu")
+
+    wybrany_gospodarz = st.sidebar.selectbox(
+        "🏠 Gospodarz",
+        kluby_lista,
+        index=kluby_lista.index(
+            st.session_state.gospodarz_biezacy
+        ),
+        key="gospodarz_biezacy"
     )
 
-    st.info(
-        "Wpisz ręcznie dowolnych zawodników oraz ich OVR."
+    wybrany_gosc = st.sidebar.selectbox(
+        "✈️ Gość",
+        kluby_lista,
+        index=kluby_lista.index(
+            st.session_state.gosc_biezacy
+        ),
+        key="gosc_biezacy"
     )
 
-    col_gosp, col_gosc = st.columns(2)
+    pogoda_opcje = POGODY + ["🎲 Losowa pogoda"]
 
-    with col_gosp:
+    wybrana_pogoda = st.sidebar.selectbox(
+        "🌤️ Warunki atmosferyczne",
+        pogoda_opcje
+    )
 
-        st.subheader(
-            f"🏠 {wybrany_gospodarz}"
-        )
+    if wybrana_pogoda == "🎲 Losowa pogoda":
 
-        for nr in range(1, 9):
+        if st.sidebar.button(
+            "🎲 Wylosuj pogodę",
+            use_container_width=True
+        ):
+            st.session_state.pogoda_ligowa = losuj_pogode()
+            st.rerun()
 
-            if nr <= 5:
-                typ = "Senior / U24"
-            elif nr in [6, 7]:
-                typ = "Junior"
-            else:
-                typ = "Rezerwa"
+        wybrana_pogoda = st.session_state.pogoda_ligowa
 
-            st.markdown(
-                f"**Nr {nr} — {typ}**"
-            )
+    else:
+        st.session_state.pogoda_ligowa = wybrana_pogoda
 
-            c1, c2 = st.columns([3, 1])
-
-            with c1:
-
-                st.session_state.sklad_gospodarze[nr] = st.text_input(
-                    f"Zawodnik {nr}",
-                    value=st.session_state.sklad_gospodarze.get(
-                        nr,
-                        ""
-                    ),
-                    key=f"manual_gosp_name_{nr}",
-                    placeholder="Imię i nazwisko"
-                )
-
-            with c2:
-
-                st.session_state.sklad_gospodarze_ovr[nr] = st.number_input(
-                    f"OVR {nr}",
-                    min_value=1,
-                    max_value=99,
-                    value=int(
-                        st.session_state.sklad_gospodarze_ovr.get(
-                            nr,
-                            60
-                        )
-                    ),
-                    key=f"manual_gosp_ovr_{nr}"
-                )
-
-    with col_gosc:
-
-        st.subheader(
-            f"✈️ {wybrany_gosc}"
-        )
-
-        for nr in range(9, 17):
-
-            if nr <= 13:
-                typ = "Senior / U24"
-            elif nr in [14, 15]:
-                typ = "Junior"
-            else:
-                typ = "Rezerwa"
-
-            st.markdown(
-                f"**Nr {nr} — {typ}**"
-            )
-
-            c1, c2 = st.columns([3, 1])
-
-            with c1:
-
-                st.session_state.sklad_goscie[nr] = st.text_input(
-                    f"Zawodnik {nr}",
-                    value=st.session_state.sklad_goscie.get(
-                        nr,
-                        ""
-                    ),
-                    key=f"manual_gosc_name_{nr}",
-                    placeholder="Imię i nazwisko"
-                )
-
-            with c2:
-
-                st.session_state.sklad_goscie_ovr[nr] = st.number_input(
-                    f"OVR {nr}",
-                    min_value=1,
-                    max_value=99,
-                    value=int(
-                        st.session_state.sklad_goscie_ovr.get(
-                            nr,
-                            60
-                        )
-                    ),
-                    key=f"manual_gosc_ovr_{nr}"
-                )
-
-    st.divider()
-
-    if st.button(
-        "🔄 Wylosuj statystyki zawodników",
-        use_container_width=True
+    if (
+        st.session_state.get("mecz_gospodarz")
+        != wybrany_gospodarz
+        or
+        st.session_state.get("mecz_gosc")
+        != wybrany_gosc
     ):
 
-        st.session_state.baza_zawodnikow = (
-            generuj_statystyki_zawodnikow()
-        )
+        st.session_state.mecz_gospodarz = wybrany_gospodarz
+        st.session_state.mecz_gosc = wybrany_gosc
 
-        st.success(
-            "Statystyki zostały wygenerowane."
-        )
-
-
-# ============================================================
-# 23. TAKTYKA
-# ============================================================
-
-with tab_taktyka:
-
-    st.header(
-        "📣 Odprawa Taktyczna"
-    )
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-
-        st.subheader(
-            f"🏠 {wybrany_gospodarz}"
-        )
-
-        st.selectbox(
-            "Tor",
-            [
-                "⚖️ Tor Neutralny",
-                "🧱 Tor Twardy",
-                "🚜 Tor Przyczepny"
-            ],
-            key="przygotowanie_toru_gosp"
-        )
-
-        st.selectbox(
-            "Styl jazdy",
-            [
-                "Standardowe nastawienie",
-                "Agresywne",
-                "Defensywne"
-            ],
-            key="styl_jazdy_gosp"
-        )
-
-        st.selectbox(
-            "Sprzęt",
-            [
-                "🔧 Silnik Niezawodny",
-                "🚀 Silnik Ekstra Mocny"
-            ],
-            key="sprzet_gosp"
-        )
-
-    with c2:
-
-        st.subheader(
-            f"✈️ {wybrany_gosc}"
-        )
-
-        st.selectbox(
-            "Styl jazdy",
-            [
-                "Standardowe nastawienie",
-                "Agresywne",
-                "Defensywne"
-            ],
-            key="styl_jazdy_gosc"
-        )
-
-        st.selectbox(
-            "Sprzęt",
-            [
-                "🔧 Silnik Niezawodny",
-                "🚀 Silnik Ekstra Mocny"
-            ],
-            key="sprzet_gosc"
-        )
-
-
-# ============================================================
-# 24. MECZ DRUŻYNOWY
-# ============================================================
-
-with tab_mecz:
-
-    st.header(
-        "🏎️ Centrum Meczowe"
-    )
-
-    if "current_heat" not in st.session_state:
-
-        st.session_state.current_heat = 0
-
-        st.session_state.score_gosp = 0
-        st.session_state.score_gosc = 0
-
-        st.session_state.match_history = []
-
-        st.session_state.rider_heats = {
-            nr: [] for nr in range(1, 17)
+        st.session_state.sklad_gospodarze = {
+            nr: "" for nr in range(1, 9)
         }
 
-        st.session_state.normal_starts_count = {
-            nr: 0 for nr in range(1, 17)
+        st.session_state.sklad_goscie = {
+            nr: "" for nr in range(9, 17)
         }
 
-        st.session_state.rt_count = {
-            nr: 0 for nr in range(1, 17)
+        st.session_state.sklad_gospodarze_ovr = {
+            nr: 60 for nr in range(1, 9)
         }
 
-        st.session_state.zz_count = {
-            nr: 0 for nr in range(1, 17)
+        st.session_state.sklad_goscie_ovr = {
+            nr: 60 for nr in range(9, 17)
         }
 
-        st.session_state.rider_bonuses = {
-            nr: 0 for nr in range(1, 17)
-        }
+        reset_ligi()
+        st.rerun()
 
-        st.session_state.kontuzjowani = set()
 
-        st.session_state.baza_zawodnikow = (
-            generuj_statystyki_zawodnikow()
-        )
+    # ========================================================
+    # TABY LIGOWE
+    # ========================================================
 
-    st.info(
-        f"🌤️ Pogoda: **{wybrana_pogoda}**"
-    )
+    tab_kadry, tab_taktyka, tab_mecz = st.tabs([
+        "👥 1. Wybór Drużyn i Kadry",
+        "📣 2. Odprawa Taktyczna",
+        "🏎️ 3. Centrum Meczowe"
+    ])
 
-    st.markdown(
-        f"## {wybrany_gospodarz} "
-        f"**{st.session_state.score_gosp}:"
-        f"{st.session_state.score_gosc}** "
-        f"{wybrany_gosc}"
-    )
 
-    if st.button(
-        "📋 Skopiuj cały raport meczu",
-        use_container_width=True
-    ):
+    # ========================================================
+    # KADRY
+    # ========================================================
 
-        raport = raport_meczu()
+    with tab_kadry:
 
-        st.code(
-            raport,
-            language="text"
+        st.header(
+            f"Składy Meczowe: {wybrany_gospodarz} vs {wybrany_gosc}"
         )
 
         st.info(
-            "Raport znajduje się powyżej i można go skopiować."
+            "✍️ Wpisz ręcznie imię i nazwisko oraz OVR. "
+            "Nie ma gotowej bazy zawodników."
         )
 
-    st.divider()
+        col_gosp, col_gosc = st.columns(2)
 
-    if st.session_state.current_heat < 15:
 
-        heat = program_zawodow[
-            st.session_state.current_heat
-        ]
+        with col_gosp:
 
-        st.subheader(
-            f"🚦 Bieg {heat['bieg']} / 15"
-        )
-
-        kaski = heat["kaski"]
-
-        uczestnicy = []
-
-        for pole in ["A", "B", "C", "D"]:
-
-            nr = heat[pole]
-
-            czy_gosp = kaski[pole] in ["🔴", "🔵"]
-
-            nazwa = pobierz_zawodnika(
-                nr,
-                czy_gosp
+            st.subheader(
+                f"🏠 {wybrany_gospodarz}"
             )
 
-            ovr = pobierz_ovr(
-                nr,
-                czy_gosp
-            )
+            for nr in range(1, 9):
 
-            if nazwa:
+                if nr <= 5:
+                    typ = "Senior / U24"
+                elif nr <= 7:
+                    typ = "Junior"
+                else:
+                    typ = "Rezerwa zwykła"
 
-                uczestnicy.append({
-                    "nr": nr,
-                    "nazwisko": nazwa,
-                    "ovr": ovr,
-                    "kask": kaski[pole],
-                    "druzyna": (
-                        "gosp"
-                        if czy_gosp
-                        else "gosc"
-                    ),
-                    "sila": (
-                        ovr
-                        + random.uniform(-5, 5)
+                st.markdown(
+                    f"**Nr {nr} — {typ}**"
+                )
+
+                c1, c2 = st.columns([3, 1])
+
+                with c1:
+                    st.text_input(
+                        f"Zawodnik nr {nr}",
+                        key=f"manual_gosp_name_{nr}",
+                        placeholder="Imię i nazwisko"
                     )
-                })
 
-        if len(uczestnicy) == 4:
+                    st.session_state.sklad_gospodarze[nr] = (
+                        st.session_state[
+                            f"manual_gosp_name_{nr}"
+                        ]
+                    )
+
+                with c2:
+                    st.number_input(
+                        f"OVR {nr}",
+                        min_value=1,
+                        max_value=99,
+                        value=60,
+                        key=f"manual_gosp_ovr_{nr}"
+                    )
+
+                    st.session_state.sklad_gospodarze_ovr[nr] = (
+                        st.session_state[
+                            f"manual_gosp_ovr_{nr}"
+                        ]
+                    )
+
+
+        with col_gosc:
+
+            st.subheader(
+                f"✈️ {wybrany_gosc}"
+            )
+
+            for nr in range(9, 17):
+
+                if nr <= 13:
+                    typ = "Senior / U24"
+                elif nr <= 15:
+                    typ = "Junior"
+                else:
+                    typ = "Rezerwa zwykła"
+
+                st.markdown(
+                    f"**Nr {nr} — {typ}**"
+                )
+
+                c1, c2 = st.columns([3, 1])
+
+                with c1:
+                    st.text_input(
+                        f"Zawodnik nr {nr}",
+                        key=f"manual_gosc_name_{nr}",
+                        placeholder="Imię i nazwisko"
+                    )
+
+                    st.session_state.sklad_goscie[nr] = (
+                        st.session_state[
+                            f"manual_gosc_name_{nr}"
+                        ]
+                    )
+
+                with c2:
+                    st.number_input(
+                        f"OVR {nr}",
+                        min_value=1,
+                        max_value=99,
+                        value=60,
+                        key=f"manual_gosc_ovr_{nr}"
+                    )
+
+                    st.session_state.sklad_goscie_ovr[nr] = (
+                        st.session_state[
+                            f"manual_gosc_ovr_{nr}"
+                        ]
+                    )
+
+
+        st.divider()
+
+        st.subheader("🩹 Z/Z — Zastępstwo Zawodnika")
+
+        z1, z2 = st.columns(2)
+
+        with z1:
+
+            st.markdown(
+                f"**🏠 {wybrany_gospodarz}**"
+            )
+
+            kand = [
+                (
+                    nr,
+                    st.session_state.sklad_gospodarze.get(nr)
+                )
+                for nr in range(1, 6)
+                if st.session_state.sklad_gospodarze.get(nr)
+            ]
+
+            if kand:
+
+                wybor = st.selectbox(
+                    "Zawodnik gospodarzy zastępowany przez Z/Z",
+                    ["Brak"]
+                    + [
+                        f"Nr {nr} - {nazwisko}"
+                        for nr, nazwisko in kand
+                    ],
+                    key="zz_choice_gosp"
+                )
+
+                if wybor != "Brak":
+
+                    nr = int(
+                        wybor.split(" - ")[0]
+                        .replace("Nr ", "")
+                    )
+
+                    st.session_state.zz_gosp = nr
+
+                else:
+                    st.session_state.zz_gosp = None
+
+            else:
+                st.info("Najpierw wpisz zawodników 1–5.")
+
+
+        with z2:
+
+            st.markdown(
+                f"**✈️ {wybrany_gosc}**"
+            )
+
+            kand = [
+                (
+                    nr,
+                    st.session_state.sklad_goscie.get(nr)
+                )
+                for nr in range(9, 14)
+                if st.session_state.sklad_goscie.get(nr)
+            ]
+
+            if kand:
+
+                wybor = st.selectbox(
+                    "Zawodnik gości zastępowany przez Z/Z",
+                    ["Brak"]
+                    + [
+                        f"Nr {nr} - {nazwisko}"
+                        for nr, nazwisko in kand
+                    ],
+                    key="zz_choice_gosc"
+                )
+
+                if wybor != "Brak":
+
+                    nr = int(
+                        wybor.split(" - ")[0]
+                        .replace("Nr ", "")
+                    )
+
+                    st.session_state.zz_gosc = nr
+
+                else:
+                    st.session_state.zz_gosc = None
+
+            else:
+                st.info("Najpierw wpisz zawodników 9–13.")
+
+
+    # ========================================================
+    # TAKTYKA
+    # ========================================================
+
+    with tab_taktyka:
+
+        st.title("🛠️ Ustawienia Taktyczne Menedżerów")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.subheader(
+                f"🏠 {wybrany_gospodarz}"
+            )
+
+            st.selectbox(
+                "📐 Przygotowanie Nawierzchni",
+                [
+                    "⚖️ Tor Neutralny",
+                    "🧱 Tor Twardy",
+                    "🚜 Tor Przyczepny"
+                ],
+                key="tor_gosp"
+            )
+
+            st.selectbox(
+                "🔥 Styl Jazdy",
+                [
+                    "Standardowe nastawienie",
+                    "Agresywne (większe ryzyko)",
+                    "Defensywne (bezpieczne)"
+                ],
+                key="styl_gosp"
+            )
+
+            st.selectbox(
+                "🔧 Sprzęt / Tuner",
+                [
+                    "🔧 Silnik Niezawodny (0% defektu)",
+                    "🚀 Silnik Ekstra Mocny (+2 siły)"
+                ],
+                key="sprzet_gosp"
+            )
+
+
+        with col2:
+
+            st.subheader(
+                f"✈️ {wybrany_gosc}"
+            )
+
+            st.selectbox(
+                "📐 Przygotowanie Nawierzchni",
+                [
+                    "⚖️ Tor Neutralny",
+                    "🧱 Tor Twardy",
+                    "🚜 Tor Przyczepny"
+                ],
+                key="tor_gosc"
+            )
+
+            st.selectbox(
+                "🔥 Styl Jazdy",
+                [
+                    "Standardowe nastawienie",
+                    "Agresywne (większe ryzyko)",
+                    "Defensywne (bezpieczne)"
+                ],
+                key="styl_gosc"
+            )
+
+            st.selectbox(
+                "🔧 Sprzęt / Tuner",
+                [
+                    "🔧 Silnik Niezawodny (0% defektu)",
+                    "🚀 Silnik Ekstra Mocny (+2 siły)"
+                ],
+                key="sprzet_gosc"
+            )
+
+
+    # ========================================================
+    # CENTRUM MECZOWE
+    # ========================================================
+
+    with tab_mecz:
+
+        st.header("🏎️ Panel Symulacji Meczowej")
+
+        if st.button(
+            "🔄 Resetuj Mecz",
+            use_container_width=True
+        ):
+            reset_ligi()
+            st.rerun()
+
+
+        # ----------------------------------------------------
+        # WYNIK
+        # ----------------------------------------------------
+
+        st.markdown(
+            f"### 📊 Aktualny Wynik: "
+            f"{wybrany_gospodarz} **"
+            f"{st.session_state.score_gosp} : "
+            f"{st.session_state.score_gosc}"
+            f"** {wybrany_gosc} | Pogoda: {wybrana_pogoda}"
+        )
+
+
+        # ----------------------------------------------------
+        # BURZA
+        # ----------------------------------------------------
+
+        if (
+            st.session_state.current_heat == 8
+            and "Burza" in wybrana_pogoda
+            and not st.session_state.decyzja_o_przerwaniu_podjeta
+        ):
+
+            st.warning(
+                "⚠️ Burza! Sędzia wstrzymał zawody po 8. biegu."
+            )
+
+            a, b = st.columns(2)
+
+            with a:
+
+                if st.button(
+                    "🔴 Przerwij mecz i zalicz wynik"
+                ):
+                    st.session_state.mecz_przerwany = True
+                    st.session_state.decyzja_o_przerwaniu_podjeta = True
+                    st.rerun()
+
+            with b:
+
+                if st.button(
+                    "🟢 Jedziemy dalej"
+                ):
+                    st.session_state.decyzja_o_przerwaniu_podjeta = True
+                    st.rerun()
+
+
+        # ----------------------------------------------------
+        # MECZ PRZERWANY
+        # ----------------------------------------------------
+
+        if st.session_state.mecz_przerwany:
+
+            st.error(
+                f"🛑 MECZ PRZERWANY! "
+                f"{wybrany_gospodarz} "
+                f"{st.session_state.score_gosp}:"
+                f"{st.session_state.score_gosc} "
+                f"{wybrany_gosc}"
+            )
+
+
+        elif st.session_state.current_heat < 15:
+
+            heat = program_zawodow[
+                st.session_state.current_heat
+            ]
+
+            nr_b = heat["bieg"]
+
+            st.divider()
+
+            st.subheader(
+                f"🚀 Bieg {nr_b} / 15"
+            )
+
+
+            # ------------------------------------------------
+            # PRZEWAGA
+            # ------------------------------------------------
+
+            roznica = (
+                st.session_state.score_gosp
+                - st.session_state.score_gosc
+            )
+
+            taktyczna_gosp = roznica <= -6
+            taktyczna_gosc = roznica >= 6
+
+
+            # ------------------------------------------------
+            # FUNKCJE LIMITÓW
+            # ------------------------------------------------
+
+            def get_pkt_sum(nr):
+
+                suma = 0
+
+                for wynik in st.session_state.rider_heats.get(
+                    nr, []
+                ):
+
+                    if str(wynik).startswith("3"):
+                        suma += 3
+
+                    elif str(wynik).startswith("2"):
+                        suma += 2
+
+                    elif str(wynik).startswith("1"):
+                        suma += 1
+
+                return (
+                    suma
+                    + st.session_state.rider_bonuses.get(
+                        nr,
+                        0
+                    )
+                )
+
+
+            def nr_jest_zz(nr):
+
+                if nr <= 8:
+                    return nr == st.session_state.zz_gosp
+
+                return nr == st.session_state.zz_gosc
+
+
+            def moze_startowac(
+                nr,
+                bieg,
+                jako_zz=False,
+                jako_rt=False
+            ):
+
+                if nr in st.session_state.kontuzjowani:
+                    return False
+
+                normalne = st.session_state.normal_starts_count.get(
+                    nr, 0
+                )
+
+                rt = st.session_state.rt_count.get(
+                    nr, 0
+                )
+
+                zz = st.session_state.zz_count.get(
+                    nr, 0
+                )
+
+                razem = normalne + rt + zz
+
+                if jako_zz:
+
+                    return (
+                        bieg != 2
+                        and bieg <= 13
+                        and zz < 1
+                        and razem < 7
+                    )
+
+                if nr_jest_zz(nr):
+                    return False
+
+                if jako_rt:
+
+                    return (
+                        bieg >= 3
+                        and bieg <= 13
+                        and rt < 1
+                        and razem < 7
+                    )
+
+                if bieg in [14, 15]:
+
+                    return razem < 7
+
+                return (
+                    normalne < 5
+                    and razem < 7
+                )
+
+
+            # ------------------------------------------------
+            # BUDOWANIE OPCJI
+            # ------------------------------------------------
+
+            def opcje_gosp(
+                prog_nr,
+                wykluczone
+            ):
+
+                wynik = []
+
+                if nr_jest_zz(prog_nr):
+
+                    for nr in range(1, 9):
+
+                        if (
+                            nr != prog_nr
+                            and nr not in wykluczone
+                            and st.session_state.sklad_gospodarze.get(nr)
+                            and moze_startowac(
+                                nr,
+                                nr_b,
+                                jako_zz=True
+                            )
+                        ):
+                            wynik.append(nr)
+
+                    return wynik
+
+
+                if nr_b in [14, 15]:
+
+                    wynik = [
+                        nr
+                        for nr in range(1, 9)
+                        if (
+                            nr not in wykluczone
+                            and st.session_state.sklad_gospodarze.get(nr)
+                            and moze_startowac(nr, nr_b)
+                        )
+                    ]
+
+                    wynik.sort(
+                        key=lambda x: (
+                            x != prog_nr,
+                            -get_pkt_sum(x)
+                        )
+                    )
+
+                    return wynik
+
+
+                if nr_b == 2:
+
+                    for nr in [6, 7, 8]:
+
+                        if (
+                            nr not in wykluczone
+                            and st.session_state.sklad_gospodarze.get(nr)
+                            and moze_startowac(nr, nr_b)
+                        ):
+                            wynik.append(nr)
+
+                    return wynik
+
+
+                if (
+                    prog_nr not in wykluczone
+                    and st.session_state.sklad_gospodarze.get(prog_nr)
+                    and moze_startowac(prog_nr, nr_b)
+                ):
+                    wynik.append(prog_nr)
+
+
+                for nr in [8, 6, 7]:
+
+                    if (
+                        nr not in wynik
+                        and nr not in wykluczone
+                        and st.session_state.sklad_gospodarze.get(nr)
+                        and moze_startowac(nr, nr_b)
+                    ):
+                        wynik.append(nr)
+
+
+                if taktyczna_gosp:
+
+                    for nr in range(1, 6):
+
+                        if (
+                            nr not in wynik
+                            and nr not in wykluczone
+                            and st.session_state.sklad_gospodarze.get(nr)
+                            and moze_startowac(
+                                nr,
+                                nr_b,
+                                jako_rt=True
+                            )
+                        ):
+                            wynik.append(nr)
+
+                return wynik
+
+
+            def opcje_gosc(
+                prog_nr,
+                wykluczone
+            ):
+
+                wynik = []
+
+                if nr_jest_zz(prog_nr):
+
+                    for nr in range(9, 17):
+
+                        if (
+                            nr != prog_nr
+                            and nr not in wykluczone
+                            and st.session_state.sklad_goscie.get(nr)
+                            and moze_startowac(
+                                nr,
+                                nr_b,
+                                jako_zz=True
+                            )
+                        ):
+                            wynik.append(nr)
+
+                    return wynik
+
+
+                if nr_b in [14, 15]:
+
+                    wynik = [
+                        nr
+                        for nr in range(9, 17)
+                        if (
+                            nr not in wykluczone
+                            and st.session_state.sklad_goscie.get(nr)
+                            and moze_startowac(nr, nr_b)
+                        )
+                    ]
+
+                    wynik.sort(
+                        key=lambda x: (
+                            x != prog_nr,
+                            -get_pkt_sum(x)
+                        )
+                    )
+
+                    return wynik
+
+
+                if nr_b == 2:
+
+                    for nr in [14, 15, 16]:
+
+                        if (
+                            nr not in wykluczone
+                            and st.session_state.sklad_goscie.get(nr)
+                            and moze_startowac(nr, nr_b)
+                        ):
+                            wynik.append(nr)
+
+                    return wynik
+
+
+                if (
+                    prog_nr not in wykluczone
+                    and st.session_state.sklad_goscie.get(prog_nr)
+                    and moze_startowac(prog_nr, nr_b)
+                ):
+                    wynik.append(prog_nr)
+
+
+                for nr in [16, 14, 15]:
+
+                    if (
+                        nr not in wynik
+                        and nr not in wykluczone
+                        and st.session_state.sklad_goscie.get(nr)
+                        and moze_startowac(nr, nr_b)
+                    ):
+                        wynik.append(nr)
+
+
+                if taktyczna_gosc:
+
+                    for nr in range(9, 14):
+
+                        if (
+                            nr not in wynik
+                            and nr not in wykluczone
+                            and st.session_state.sklad_goscie.get(nr)
+                            and moze_startowac(
+                                nr,
+                                nr_b,
+                                jako_rt=True
+                            )
+                        ):
+                            wynik.append(nr)
+
+                return wynik
+
+
+            # ------------------------------------------------
+            # WYBÓR 4 ZAWODNIKÓW
+            # ------------------------------------------------
+
+            cols = st.columns(4)
+
+            wybrane = []
+            uczestnicy = {}
+
+            for i, pole in enumerate(["A", "B", "C", "D"]):
+
+                prog_nr = heat[pole]
+                kask = heat["kaski"][pole]
+
+                gospodarze = kask in ["🔴", "🔵"]
+
+                if gospodarze:
+
+                    opcje = opcje_gosp(
+                        prog_nr,
+                        wybrane
+                    )
+
+                    sklad = st.session_state.sklad_gospodarze
+                    ovr = st.session_state.sklad_gospodarze_ovr
+
+                else:
+
+                    opcje = opcje_gosc(
+                        prog_nr,
+                        wybrane
+                    )
+
+                    sklad = st.session_state.sklad_goscie
+                    ovr = st.session_state.sklad_goscie_ovr
+
+                with cols[i]:
+
+                    if not opcje:
+
+                        st.error(
+                            f"Brak zawodnika dla pola {pole}."
+                        )
+
+                        st.stop()
+
+                    def format_zawodnika(x):
+
+                        return (
+                            f"Nr {x} - "
+                            f"{sklad[x]} "
+                            f"(OVR: {ovr[x]})"
+                        )
+
+                    wybor = st.selectbox(
+                        (
+                            f"{kask} Pole {pole} "
+                            f"(Program: Nr {prog_nr})"
+                        ),
+                        opcje,
+                        format_func=format_zawodnika,
+                        key=f"liga_heat_{nr_b}_{pole}"
+                    )
+
+                    wybrane.append(wybor)
+
+                    czy_zz = nr_jest_zz(prog_nr)
+
+                    czy_rt = (
+                        not czy_zz
+                        and wybor != prog_nr
+                        and (
+                            (
+                                gospodarze
+                                and wybor in range(1, 6)
+                            )
+                            or (
+                                not gospodarze
+                                and wybor in range(9, 14)
+                            )
+                        )
+                        and (
+                            taktyczna_gosp
+                            if gospodarze
+                            else taktyczna_gosc
+                        )
+                        and nr_b not in [2, 14, 15]
+                    )
+
+                    uczestnicy[pole] = {
+                        "nr": wybor,
+                        "nazwisko": sklad[wybor],
+                        "ovr": ovr[wybor],
+                        "kask": kask,
+                        "druzyna": (
+                            "gosp"
+                            if gospodarze
+                            else "gosc"
+                        ),
+                        "czy_zz": czy_zz,
+                        "czy_rt": czy_rt
+                    }
+
+
+            # ------------------------------------------------
+            # JEDŹ BIEG
+            # ------------------------------------------------
 
             if st.button(
                 "🏁 Jedź Bieg",
                 use_container_width=True
             ):
 
-                for u in uczestnicy:
+                lista = list(
+                    uczestnicy.values()
+                )
 
-                    if (
-                        "Ekstra Mocny"
-                        in st.session_state.get(
-                            f"sprzet_{u['druzyna']}",
+                zdarzenia = []
+
+                # --------------------------------------------
+                # RODZAJ STARTU
+                # --------------------------------------------
+
+                for u in lista:
+
+                    nr = u["nr"]
+
+                    if u["czy_zz"]:
+                        st.session_state.zz_count[nr] += 1
+
+                    elif u["czy_rt"]:
+                        st.session_state.rt_count[nr] += 1
+
+                    else:
+                        st.session_state.normal_starts_count[nr] += 1
+
+                    st.session_state.starts_count[nr] += 1
+
+
+                # --------------------------------------------
+                # SIŁA + ZDARZENIA
+                # --------------------------------------------
+
+                for u in lista:
+
+                    if u["druzyna"] == "gosp":
+
+                        tor = st.session_state.get(
+                            "tor_gosp",
+                            "⚖️ Tor Neutralny"
+                        )
+
+                        styl = st.session_state.get(
+                            "styl_gosp",
+                            "Standardowe nastawienie"
+                        )
+
+                        sprzet = st.session_state.get(
+                            "sprzet_gosp",
                             ""
                         )
-                    ):
 
-                        u["sila"] += 2
+                    else:
 
-                uczestnicy.sort(
+                        tor = st.session_state.get(
+                            "tor_gosc",
+                            "⚖️ Tor Neutralny"
+                        )
+
+                        styl = st.session_state.get(
+                            "styl_gosc",
+                            "Standardowe nastawienie"
+                        )
+
+                        sprzet = st.session_state.get(
+                            "sprzet_gosc",
+                            ""
+                        )
+
+                    if "Twardy" in tor:
+                        typ_toru = "twardy"
+
+                    elif "Przyczepny" in tor:
+                        typ_toru = "przyczepny"
+
+                    else:
+                        typ_toru = "neutralny"
+
+                    sila = sila_zawodnika(
+                        u["ovr"],
+                        typ_toru,
+                        wybrana_pogoda
+                    )
+
+                    if "Agresywne" in styl:
+                        sila += 1
+                        szansa_defektu = 0.04
+
+                    elif "Defensywne" in styl:
+                        sila -= 0.5
+                        szansa_defektu = 0.015
+
+                    else:
+                        szansa_defektu = 0.02
+
+                    if "Ekstra Mocny" in sprzet:
+                        sila += 2
+                        szansa_defektu += 0.02
+
+                    u["sila"] = sila
+
+                    los = random.random()
+
+                    if los < szansa_defektu:
+
+                        u["wynik_litera"] = "D"
+                        u["sila"] = -100
+
+                        zdarzenia.append(
+                            f"💨 Defekt sprzętu: "
+                            f"{u['nazwisko']}!"
+                        )
+
+                    elif los < szansa_defektu + 0.03:
+
+                        u["wynik_litera"] = "U"
+                        u["sila"] = -200
+
+                        zdarzenia.append(
+                            f"💥 Upadek: "
+                            f"{u['nazwisko']}!"
+                        )
+
+                        if random.random() < 0.20:
+
+                            st.session_state.kontuzjowani.add(
+                                u["nr"]
+                            )
+
+                            zdarzenia.append(
+                                f"🚑 {u['nazwisko']} "
+                                f"niezdolny do dalszej jazdy!"
+                            )
+
+                    elif los < szansa_defektu + 0.08:
+
+                        u["wynik_litera"] = "W"
+                        u["sila"] = -300
+
+                        zdarzenia.append(
+                            f"🚫 Wykluczenie: "
+                            f"{u['nazwisko']}!"
+                        )
+
+                    else:
+
+                        u["wynik_litera"] = None
+
+
+                # --------------------------------------------
+                # KLASYFIKACJA
+                # --------------------------------------------
+
+                lista.sort(
                     key=lambda x: x["sila"],
                     reverse=True
                 )
 
+                sklasyfikowani = [
+                    u for u in lista
+                    if not u["wynik_litera"]
+                ]
+
+                niesklasyfikowani = [
+                    u for u in lista
+                    if u["wynik_litera"]
+                ]
+
                 punkty = [3, 2, 1, 0]
 
-                gosp_pkt = 0
-                gosc_pkt = 0
+                wynik_g = 0
+                wynik_go = 0
 
-                szczegoly = []
 
-                for i, u in enumerate(uczestnicy):
+                for i, u in enumerate(sklasyfikowani):
 
-                    pkt = punkty[i]
+                    pkt = (
+                        punkty[i]
+                        if i < len(punkty)
+                        else 0
+                    )
+
+                    bonus = False
+
+                    if pkt == 2:
+
+                        if (
+                            sklasyfikowani
+                            and sklasyfikowani[0]["druzyna"]
+                            == u["druzyna"]
+                        ):
+                            bonus = True
+
+                    if pkt == 1:
+
+                        if len(sklasyfikowani) >= 2:
+
+                            if (
+                                sklasyfikowani[0]["druzyna"]
+                                == u["druzyna"]
+                                or
+                                sklasyfikowani[1]["druzyna"]
+                                == u["druzyna"]
+                            ):
+                                bonus = True
+
+                    zapis = (
+                        f"{pkt}*"
+                        if bonus
+                        else str(pkt)
+                    )
+
+                    if bonus:
+
+                        st.session_state.rider_bonuses[
+                            u["nr"]
+                        ] += 1
+
+                    st.session_state.rider_heats[
+                        u["nr"]
+                    ].append(zapis)
 
                     if u["druzyna"] == "gosp":
-                        gosp_pkt += pkt
+                        wynik_g += pkt
                     else:
-                        gosc_pkt += pkt
+                        wynik_go += pkt
+
+
+                for u in niesklasyfikowani:
 
                     st.session_state.rider_heats[
                         u["nr"]
                     ].append(
-                        str(pkt)
+                        u["wynik_litera"]
                     )
 
-                    st.session_state.normal_starts_count[
+
+                st.session_state.score_gosp += wynik_g
+                st.session_state.score_gosc += wynik_go
+
+
+                komentarz = komentarz_biegu(
+                    sklasyfikowani,
+                    zdarzenia
+                )
+
+
+                szczegoly = []
+
+                for u in lista:
+
+                    zapis = st.session_state.rider_heats[
                         u["nr"]
-                    ] += 1
+                    ][-1]
+
+                    status = ""
+
+                    if u["czy_zz"]:
+                        status = " [Z/Z]"
+
+                    elif u["czy_rt"]:
+                        status = " [RT]"
 
                     szczegoly.append(
                         f"{u['nazwisko']} "
-                        f"({u['kask']}) - {pkt}"
+                        f"({u['kask']}) - "
+                        f"{zapis}{status}"
                     )
 
-                st.session_state.score_gosp += gosp_pkt
-                st.session_state.score_gosc += gosc_pkt
-
-                komentarz = generuj_komentarz_sf(
-                    uczestnicy,
-                    []
-                )
 
                 st.session_state.match_history.append({
-                    "bieg": heat["bieg"],
+                    "bieg": nr_b,
                     "wynik_biegu": (
-                        f"{gosp_pkt}:{gosc_pkt}"
+                        f"{wynik_g}:{wynik_go}"
                     ),
                     "szczegoly": ", ".join(
                         szczegoly
@@ -1926,27 +1642,32 @@ with tab_mecz:
 
                 st.rerun()
 
-        else:
 
-            st.warning(
-                "Aby przeprowadzić mecz, wpisz zawodników "
-                "w wymagane pola."
+        # ----------------------------------------------------
+        # KONIEC MECZU
+        # ----------------------------------------------------
+
+        if st.session_state.current_heat >= 15:
+
+            st.success(
+                f"🏁 KONIEC MECZU! "
+                f"{wybrany_gospodarz} "
+                f"{st.session_state.score_gosp}:"
+                f"{st.session_state.score_gosc} "
+                f"{wybrany_gosc}"
             )
 
-    else:
 
-        st.success(
-            f"🏁 KONIEC MECZU! "
-            f"{wybrany_gospodarz} "
-            f"{st.session_state.score_gosp}:"
-            f"{st.session_state.score_gosc} "
-            f"{wybrany_gosc}"
-        )
+        # ----------------------------------------------------
+        # HISTORIA
+        # ----------------------------------------------------
 
         if st.session_state.match_history:
 
+            st.divider()
+
             st.subheader(
-                "📜 Historia biegów"
+                "📜 Historia Biegów i Komentarz Live"
             )
 
             for hist in reversed(
@@ -1954,413 +1675,122 @@ with tab_mecz:
             ):
 
                 with st.expander(
-                    f"Bieg {hist['bieg']} — "
-                    f"{hist['wynik_biegu']}"
+                    (
+                        f"Bieg {hist['bieg']} | "
+                        f"Wynik: {hist['wynik_biegu']}"
+                    )
                 ):
 
-                    st.write(
-                        hist["szczegoly"]
+                    st.markdown(
+                        f"**Kolejność na mecie:** "
+                        f"{hist['szczegoly']}"
                     )
 
                     st.info(
-                        hist["komentarz"]
+                        f"🎙️ {hist['komentarz']}"
                     )
 
-    st.divider()
 
-    st.subheader(
-        "📊 Tabela punktowa"
-    )
-
-    tabela = []
-
-    for nr in range(1, 17):
-
-        nazwa = pobierz_zawodnika(
-            nr,
-            nr <= 8
-        )
-
-        if not nazwa:
-            continue
-
-        biegi = st.session_state.rider_heats.get(
-            nr,
-            []
-        )
-
-        pkt = 0
-
-        for wynik in biegi:
-
-            if str(wynik).startswith("3"):
-                pkt += 3
-
-            elif str(wynik).startswith("2"):
-                pkt += 2
-
-            elif str(wynik).startswith("1"):
-                pkt += 1
-
-        tabela.append({
-            "Nr": nr,
-            "Zawodnik": nazwa,
-            "OVR": pobierz_ovr(
-                nr,
-                nr <= 8
-            ),
-            "Pkt": pkt,
-            "Biegi": ", ".join(
-                map(str, biegi)
-            ),
-            "Starty": len(biegi)
-        })
-
-    if tabela:
-
-        st.dataframe(
-            pd.DataFrame(tabela),
-            hide_index=True,
-            use_container_width=True
-        )
-
-
-# ============================================================
-# 25. ZAWODY INDYWIDUALNE — PANEL
-# ============================================================
-
-with tab_indi:
-
-    st.header(
-        "🏆 Zawody Indywidualne"
-    )
-
-    st.info(
-        "Wybierz format zawodów. Każdy format ma własny schemat."
-    )
-
-    wybrany_format = st.selectbox(
-        "🏆 Format zawodów",
-        FORMATY_INDYWIDUALNE,
-        key="indi_format"
-    )
-
-    # --------------------------------------------------------
-    # OPIS FORMATU
-    # --------------------------------------------------------
-
-    if wybrany_format == "🌍 SGP — Grand Prix":
-
-        st.markdown(
-            """
-### 🌍 SGP — Grand Prix
-
-- 16 zawodników
-- 20 biegów rundy zasadniczej
-- dwóch najlepszych po 20 biegach trafia bezpośrednio do finału
-- miejsca 3–10 trafiają do dwóch LCQ
-- zwycięzcy LCQ awansują do finału
-- finał rozstrzyga zwycięzcę rundy
-            """
-        )
-
-    elif wybrany_format == "🇵🇱 IMP — Indywidualne Mistrzostwa Polski":
-
-        st.markdown(
-            """
-### 🇵🇱 IMP
-
-- 16 zawodników w turnieju finałowym
-- 20 biegów turnieju głównego
-- półfinał
-- finał
-- końcowa klasyfikacja turnieju jest ustalana zgodnie z kolejnością
-  po turnieju głównym oraz wynikami półfinału i finału
-            """
-        )
-
-    else:
-
-        st.markdown(
-            """
-### 🏆 Złoty Kask
-
-- 16 zawodników
-- 2 miejsca rezerwowe przygotowane w panelu
-- 20 biegów
-- klasyfikacja na podstawie zdobytych punktów
-- przy remisie na pierwszym miejscu możliwość rozegrania biegu dodatkowego
-            """
-        )
-
-    # --------------------------------------------------------
-    # POGODA
-    # --------------------------------------------------------
-
-    tryb_pogody_indi = st.selectbox(
-        "🌤️ Pogoda",
-        LISTA_POGODY + ["🎲 Losowa pogoda"],
-        key="indi_tryb_pogody"
-    )
-
-    if tryb_pogody_indi == "🎲 Losowa pogoda":
-
-        if st.button(
-            "🎲 Losuj pogodę",
-            key="losuj_pogode_indi"
-        ):
-
-            st.session_state.indi_pogoda = losuj_pogode()
-
-    else:
-
-        st.session_state.indi_pogoda = tryb_pogody_indi
-
-    st.info(
-        f"Aktualna pogoda: **{st.session_state.indi_pogoda}**"
-    )
-
-    st.selectbox(
-        "🛣️ Charakterystyka toru",
-        [
-            "⚖️ Tor Neutralny",
-            "🧱 Tor Twardy",
-            "🚜 Tor Przyczepny"
-        ],
-        key="indi_tor"
-    )
-
-    # --------------------------------------------------------
-    # ZAWODNICY
-    # --------------------------------------------------------
-
-    st.divider()
-
-    st.subheader(
-        "👤 Zawodnicy"
-    )
-
-    st.caption(
-        "Wpisz 16 zawodników. Dla Złotego Kasku pola 17 i 18 "
-        "mogą służyć jako rezerwa."
-    )
-
-    for nr in range(1, 19):
-
-        if nr <= 16:
-
-            label = f"Zawodnik nr {nr}"
-
-        elif nr == 17:
-
-            label = "Rezerwa 1"
-
-        else:
-
-            label = "Rezerwa 2"
-
-        st.markdown(
-            f"**{label}**"
-        )
-
-        c1, c2, c3, c4 = st.columns(
-            [3, 1, 1.5, 1.5]
-        )
-
-        with c1:
-
-            st.session_state.indi_zawodnicy[nr]["name"] = st.text_input(
-                "Imię i nazwisko",
-                value=st.session_state.indi_zawodnicy[nr]["name"],
-                key=f"indi_name_{nr}",
-                placeholder="Imię i nazwisko"
-            )
-
-        with c2:
-
-            st.session_state.indi_zawodnicy[nr]["ovr"] = st.number_input(
-                "OVR",
-                min_value=1,
-                max_value=99,
-                value=int(
-                    st.session_state.indi_zawodnicy[nr]["ovr"]
-                ),
-                key=f"indi_ovr_{nr}"
-            )
-
-        with c3:
-
-            st.session_state.indi_zawodnicy[nr]["narodowosc"] = st.selectbox(
-                "Kraj",
-                [
-                    "Polska",
-                    "Dania",
-                    "Szwecja",
-                    "Australia",
-                    "Wielka Brytania",
-                    "Czechy",
-                    "Łotwa",
-                    "Niemcy",
-                    "Ukraina",
-                    "Finlandia",
-                    "Norwegia",
-                    "Inny"
-                ],
-                index=0,
-                key=f"indi_country_{nr}"
-            )
-
-        with c4:
-
-            st.session_state.indi_zawodnicy[nr]["status"] = st.selectbox(
-                "Status",
-                [
-                    "Senior",
-                    "U24",
-                    "Junior"
-                ],
-                key=f"indi_status_{nr}"
-            )
-
-    # --------------------------------------------------------
-    # KONTROLA SKŁADU
-    # --------------------------------------------------------
-
-    st.divider()
-
-    aktywni = aktywni_zawodnicy()
-
-    st.write(
-        f"**Wpisanych zawodników: {len(aktywni)} / 16**"
-    )
-
-    if len(aktywni) < 16:
-
-        st.warning(
-            "Aby rozpocząć zawody, wpisz 16 zawodników."
-        )
-
-    # --------------------------------------------------------
-    # PRZYCISKI
-    # --------------------------------------------------------
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-
-        if st.button(
-            "🔄 Nowe zawody",
-            use_container_width=True
-        ):
-
-            reset_indywidualnych()
-
-            st.rerun()
-
-    with c2:
-
-        if st.button(
-            "🎲 Wylosuj pogodę",
-            use_container_width=True
-        ):
-
-            st.session_state.indi_pogoda = losuj_pogode()
-
-            st.rerun()
-
-    with c3:
-
-        if st.button(
-            "📊 Wygeneruj statystyki",
-            use_container_width=True
-        ):
-
-            if len(aktywni) >= 16:
-
-                generuj_indi_baze()
-
-                st.success(
-                    "Statystyki zawodników wygenerowane."
-                )
-
-            else:
-
-                st.warning(
-                    "Najpierw wpisz 16 zawodników."
-                )
-
-    # --------------------------------------------------------
-    # START ZAWODÓW
-    # --------------------------------------------------------
-
-    if (
-        len(aktywni) >= 16
-        and not st.session_state.indi_baza
-    ):
-
-        if st.button(
-            "🏁 ROZPOCZNIJ ZAWODY",
-            use_container_width=True
-        ):
-
-            generuj_indi_baze()
-
-            st.session_state.indi_heat = 0
-            st.session_state.indi_stage = "main"
-            st.session_state.indi_finished = False
-
-            st.rerun()
-
-    # --------------------------------------------------------
-    # SYMULACJA
-    # --------------------------------------------------------
-
-    if (
-        len(aktywni) >= 16
-        and st.session_state.indi_baza
-    ):
-
-        st.divider()
-
-        if not st.session_state.indi_finished:
-
-            if wybrany_format == "🌍 SGP — Grand Prix":
-
-                uruchom_sgp()
-
-            elif wybrany_format == "🇵🇱 IMP — Indywidualne Mistrzostwa Polski":
-
-                uruchom_imp()
-
-            elif wybrany_format == "🏆 Złoty Kask":
-
-                uruchom_zloty_kask()
-
-        else:
-
-            st.success(
-                "🏆 ZAWODY ZAKOŃCZONE"
-            )
-
-    # --------------------------------------------------------
-    # KLASYFIKACJA
-    # --------------------------------------------------------
-
-    if st.session_state.indi_baza:
+        # ----------------------------------------------------
+        # TABELA PUNKTOWA
+        # ----------------------------------------------------
 
         st.divider()
 
         st.subheader(
-            "📊 Aktualna klasyfikacja"
+            "📋 Tabela Punktowa Zawodników"
         )
 
-        df_indi = klasyfikacja_indi()
 
-        st.dataframe(
-            df_indi,
-            hide_index=True,
-            use_container_width=True
-        )
+        def tabela_ligi(sklad, gospodarze):
+
+            dane = []
+
+            for nr, zawodnik in sklad.items():
+
+                if not zawodnik:
+                    continue
+
+                biegi = st.session_state.rider_heats.get(
+                    nr,
+                    []
+                )
+
+                pkt = 0
+
+                for x in biegi:
+
+                    if str(x).startswith("3"):
+                        pkt += 3
+
+                    elif str(x).startswith("2"):
+                        pkt += 2
+
+                    elif str(x).startswith("1"):
+                        pkt += 1
+
+                bonus = st.session_state.rider_bonuses.get(
+                    nr,
+                    0
+                )
+
+                dane.append({
+                    "Nr": nr,
+                    "Zawodnik": zawodnik,
+                    "OVR": pobierz_ovr(nr, gospodarze),
+                    "Pkt": pkt,
+                    "Bon": bonus,
+                    "Razem": f"{pkt}+{bonus}",
+                    "Biegi": ", ".join(
+                        map(str, biegi)
+                    ),
+                    "Starty": len(biegi),
+                    "Zwykłe": st.session_state.normal_starts_count.get(
+                        nr, 0
+                    ),
+                    "RT": st.session_state.rt_count.get(
+                        nr, 0
+                    ),
+                    "Z/Z": st.session_state.zz_count.get(
+                        nr, 0
+                    )
+                })
+
+            return pd.DataFrame(dane)
+
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+
+            st.markdown(
+                f"**🏠 {wybrany_gospodarz}**"
+            )
+
+            st.dataframe(
+                tabela_ligi(
+                    st.session_state.sklad_gospodarze,
+                    True
+                ),
+                hide_index=True,
+                use_container_width=True
+            )
+
+        with c2:
+
+            st.markdown(
+                f"**✈️ {wybrany_gosc}**"
+            )
+
+            st.dataframe(
+                tabela_ligi(
+                    st.session_state.sklad_goscie,
+                    False
+                ),
+                hide_index=True,
+                use_container_width=True
+            )
+
 
         # ----------------------------------------------------
         # RAPORT
@@ -2369,54 +1799,1103 @@ with tab_indi:
         st.divider()
 
         st.subheader(
-            "📋 Raport zawodów"
+            "📄 Raport meczu"
         )
 
+        raport = []
+
+        raport.append(
+            "========================================"
+        )
+        raport.append(
+            "🏁 RAPORT MECZU ŻUŻLOWEGO"
+        )
+        raport.append(
+            "========================================"
+        )
+
+        raport.append(
+            f"Gospodarz: {wybrany_gospodarz}"
+        )
+
+        raport.append(
+            f"Gość: {wybrany_gosc}"
+        )
+
+        raport.append(
+            f"Pogoda: {wybrana_pogoda}"
+        )
+
+        raport.append("")
+
+        raport.append(
+            f"AKTUALNY WYNIK: "
+            f"{st.session_state.score_gosp}:"
+            f"{st.session_state.score_gosc}"
+        )
+
+        raport.append("")
+
+        raport.append(
+            "----------- BIEGI -----------"
+        )
+
+        for hist in st.session_state.match_history:
+
+            raport.append(
+                f"Bieg {hist['bieg']} | "
+                f"Wynik: {hist['wynik_biegu']}"
+            )
+
+            raport.append(
+                f"Kolejność na mecie: "
+                f"{hist['szczegoly']}"
+            )
+
+            raport.append(
+                f"Komentarz: {hist['komentarz']}"
+            )
+
+            raport.append("")
+
+
+        raport.append(
+            "----------- PUNKTY -----------"
+        )
+
+        for sklad, gospodarze in [
+            (
+                st.session_state.sklad_gospodarze,
+                True
+            ),
+            (
+                st.session_state.sklad_goscie,
+                False
+            )
+        ]:
+
+            for nr, zawodnik in sklad.items():
+
+                if not zawodnik:
+                    continue
+
+                biegi = st.session_state.rider_heats.get(
+                    nr,
+                    []
+                )
+
+                pkt = 0
+
+                for x in biegi:
+
+                    if str(x).startswith("3"):
+                        pkt += 3
+
+                    elif str(x).startswith("2"):
+                        pkt += 2
+
+                    elif str(x).startswith("1"):
+                        pkt += 1
+
+                bonus = st.session_state.rider_bonuses.get(
+                    nr,
+                    0
+                )
+
+                raport.append(
+                    f"Nr {nr} | {zawodnik} | "
+                    f"OVR {pobierz_ovr(nr, gospodarze)} | "
+                    f"{pkt}+{bonus} | "
+                    f"Biegi: {', '.join(map(str, biegi))}"
+                )
+
+
+        raport_text = "\n".join(raport)
+
+        st.download_button(
+            "📥 Pobierz raport meczu TXT",
+            raport_text,
+            file_name="raport_meczu.txt",
+            mime="text/plain",
+            use_container_width=True
+        )
+
+        st.text_area(
+            "📋 Cały raport do skopiowania",
+            raport_text,
+            height=350
+        )
+
+
+# ============================================================
+# TRYB ZAWODÓW INDYWIDUALNYCH
+# ============================================================
+
+else:
+
+    st.sidebar.header("🏆 Zawody Indywidualne")
+
+    format_turnieju = st.sidebar.selectbox(
+        "Format zawodów",
+        [
+            "🏆 SGP",
+            "🇵🇱 IMP",
+            "🥇 Złoty Kask"
+        ]
+    )
+
+
+    # ========================================================
+    # DEFINICJA FORMATU
+    # ========================================================
+
+    if format_turnieju == "🏆 SGP":
+
+        nazwa_turnieju = "SGP"
+        liczba_zawodnikow = 20
+        liczba_biegow = 20
+        etap_koncowy = True
+
+    elif format_turnieju == "🇵🇱 IMP":
+
+        nazwa_turnieju = "IMP"
+        liczba_zawodnikow = 20
+        liczba_biegow = 20
+        etap_koncowy = True
+
+    else:
+
+        nazwa_turnieju = "Złoty Kask"
+        liczba_zawodnikow = 20
+        liczba_biegow = 20
+        etap_koncowy = True
+
+
+    # ========================================================
+    # ZMIANA FORMATU = RESET
+    # ========================================================
+
+    if (
+        st.session_state.get("ostatni_format_ind")
+        != format_turnieju
+    ):
+
+        st.session_state.ostatni_format_ind = (
+            format_turnieju
+        )
+
+        reset_indywidualne()
+
+
+    # ========================================================
+    # KADRA INDYWIDUALNA
+    # ========================================================
+
+    tab_ind_kadra, tab_ind_mecz, tab_ind_tabela = st.tabs([
+        "👥 Zawodnicy",
+        "🏎️ Centrum Zawodów",
+        "📊 Klasyfikacja"
+    ])
+
+
+    with tab_ind_kadra:
+
+        st.header(
+            f"{nazwa_turnieju} — Lista zawodników"
+        )
+
+        st.info(
+            "Wpisz 20 zawodników. Każdy zawodnik może mieć "
+            "dowolne imię, OVR, kraj oraz status U24."
+        )
+
+        for nr in range(1, 21):
+
+            st.markdown(
+                f"### Nr {nr}"
+            )
+
+            c1, c2, c3, c4 = st.columns(
+                [3, 1, 1, 1]
+            )
+
+            with c1:
+
+                st.text_input(
+                    "Imię i nazwisko",
+                    key=f"ind_name_{nr}",
+                    placeholder="np. Bartosz Zmarzlik"
+                )
+
+            with c2:
+
+                st.number_input(
+                    "OVR",
+                    min_value=1,
+                    max_value=99,
+                    value=60,
+                    key=f"ind_ovr_{nr}"
+                )
+
+            with c3:
+
+                st.selectbox(
+                    "Kraj",
+                    [
+                        "🇵🇱 Polska",
+                        "🇩🇰 Dania",
+                        "🇸🇪 Szwecja",
+                        "🇬🇧 Wielka Brytania",
+                        "🇦🇺 Australia",
+                        "🇱🇻 Łotwa",
+                        "🇫🇮 Finlandia",
+                        "🇳🇴 Norwegia",
+                        "🇨🇿 Czechy",
+                        "🇩🇪 Niemcy",
+                        "🇷🇺 Rosja",
+                        "🇺🇦 Ukraina",
+                        "🇫🇷 Francja",
+                        "🇪🇪 Estonia",
+                        "Inny"
+                    ],
+                    key=f"ind_kraj_{nr}"
+                )
+
+            with c4:
+
+                st.checkbox(
+                    "U24",
+                    key=f"ind_u24_{nr}"
+                )
+
+
+        st.divider()
+
         if st.button(
-            "📋 Pokaż cały raport",
+            "🎲 Wylosuj brakujących zawodników",
             use_container_width=True
         ):
 
-            st.code(
-                raport_indi(),
-                language="text"
-            )
+            imiona = [
+                "Bartosz Zmarzlik",
+                "Artiom Łaguta",
+                "Maciej Janowski",
+                "Jack Holder",
+                "Anders Thomsen",
+                "Leon Madsen",
+                "Martin Vaculik",
+                "Fredrik Lindgren",
+                "Brady Kurtz",
+                "Patryk Dudek",
+                "Robert Lambert",
+                "Dominik Kubera",
+                "Piotr Pawlicki",
+                "Przemysław Pawlicki",
+                "Kacper Woryna",
+                "Janusz Kołodziej",
+                "Daniel Bewley",
+                "Mateusz Cierniak",
+                "Mikkel Michelsen",
+                "Emil Sajfutdinow"
+            ]
 
-        st.caption(
-            "Raport zawiera pogodę, wszystkie biegi, "
-            "zdarzenia i klasyfikację."
-        )
+            for nr in range(1, 21):
 
-        # ----------------------------------------------------
-        # HISTORIA
-        # ----------------------------------------------------
-
-        if st.session_state.indi_history:
-
-            st.divider()
-
-            st.subheader(
-                "📜 Historia biegów"
-            )
-
-            for hist in reversed(
-                st.session_state.indi_history
-            ):
-
-                with st.expander(
-                    hist["bieg"]
+                if not st.session_state.get(
+                    f"ind_name_{nr}"
                 ):
 
-                    for wynik in hist["wynik"]:
+                    st.session_state[
+                        f"ind_name_{nr}"
+                    ] = imiona[nr - 1]
 
-                        st.write(
-                            wynik
+                    st.session_state[
+                        f"ind_ovr_{nr}"
+                    ] = random.randint(70, 95)
+
+            st.rerun()
+
+
+    # ========================================================
+    # FUNKCJE INDYWIDUALNE
+    # ========================================================
+
+    def zawodnicy_ind():
+
+        wynik = []
+
+        for nr in range(1, 21):
+
+            nazwa = st.session_state.get(
+                f"ind_name_{nr}",
+                ""
+            )
+
+            if not nazwa:
+                continue
+
+            wynik.append({
+                "nr": nr,
+                "nazwisko": nazwa,
+                "ovr": st.session_state.get(
+                    f"ind_ovr_{nr}",
+                    60
+                ),
+                "kraj": st.session_state.get(
+                    f"ind_kraj_{nr}",
+                    "🇵🇱 Polska"
+                ),
+                "u24": st.session_state.get(
+                    f"ind_u24_{nr}",
+                    False
+                )
+            })
+
+        return wynik
+
+
+    def program_indywidualny():
+
+        """
+        20 biegów kwalifikacyjnych.
+        Każdy zawodnik występuje cztery razy.
+        Później dwa półfinały i finał.
+        """
+
+        program = []
+
+        # Układ 20 biegów.
+        # Każdy numer pojawia się cztery razy.
+
+        for bieg in range(1, 21):
+
+            grupa = []
+
+            start = ((bieg - 1) % 5) + 1
+
+            for j in range(4):
+
+                nr = (
+                    ((start - 1 + j * 5 + (bieg - 1) // 5)
+                     % 20)
+                    + 1
+                )
+
+                grupa.append(nr)
+
+            # Korekta tak, aby bieg miał czterech różnych zawodników.
+            grupa = list(dict.fromkeys(grupa))
+
+            while len(grupa) < 4:
+
+                kand = random.randint(1, 20)
+
+                if kand not in grupa:
+                    grupa.append(kand)
+
+            program.append(grupa[:4])
+
+        return program
+
+
+    # ========================================================
+    # GENEROWANIE PROGRAMU
+    # ========================================================
+
+    if "ind_program" not in st.session_state:
+
+        st.session_state.ind_program = (
+            program_indywidualny()
+        )
+
+
+    # ========================================================
+    # CENTRUM INDYWIDUALNE
+    # ========================================================
+
+    with tab_ind_mecz:
+
+        zawodnicy = zawodnicy_ind()
+
+        if len(zawodnicy) < 4:
+
+            st.warning(
+                "Wpisz co najmniej 4 zawodników, aby rozpocząć."
+            )
+
+        else:
+
+            st.header(
+                f"🏁 {nazwa_turnieju}"
+            )
+
+            if st.button(
+                "🔄 Resetuj zawody",
+                use_container_width=True
+            ):
+
+                reset_indywidualne()
+
+                st.session_state.ind_program = (
+                    program_indywidualny()
+                )
+
+                st.rerun()
+
+
+            # ------------------------------------------------
+            # STAGE
+            # ------------------------------------------------
+
+            if st.session_state.ind_current_heat < 20:
+
+                nr_biegu = (
+                    st.session_state.ind_current_heat + 1
+                )
+
+                uczestnicy_programowi = (
+                    st.session_state.ind_program[
+                        st.session_state.ind_current_heat
+                    ]
+                )
+
+                st.divider()
+
+                st.subheader(
+                    f"🚀 Bieg {nr_biegu} / 20"
+                )
+
+                st.caption(
+                    "Każdy bieg indywidualny ma czterech zawodników."
+                )
+
+
+                opcje = []
+
+                for nr in uczestnicy_programowi:
+
+                    zawodnik = next(
+                        (
+                            x for x in zawodnicy
+                            if x["nr"] == nr
+                        ),
+                        None
+                    )
+
+                    if zawodnik:
+                        opcje.append(zawodnik)
+
+
+                cols = st.columns(4)
+
+                wybrane_ind = []
+
+                for i, zawodnik in enumerate(opcje):
+
+                    with cols[i]:
+
+                        st.markdown(
+                            f"**{KASKI[i]} Nr {zawodnik['nr']}**"
                         )
 
-                    if hist["zdarzenia"]:
+                        st.markdown(
+                            f"{zawodnik['nazwisko']}"
+                        )
 
-                        for zdarzenie in hist["zdarzenia"]:
+                        st.caption(
+                            f"{zawodnik['kraj']} | "
+                            f"OVR {zawodnik['ovr']}"
+                        )
 
-                            st.warning(
-                                zdarzenie
+
+                        # W zawodach indywidualnych
+                        # można zmienić zawodnika tylko
+                        # na dostępnego rezerwowego,
+                        # jeśli turniej jest skonfigurowany
+                        # z rezerwami.
+
+                        wybor = zawodnik
+
+                        wybrane_ind.append(
+                            wybor
+                        )
+
+
+                if len(wybrane_ind) == 4:
+
+                    if st.button(
+                        "🏁 Jedź Bieg",
+                        use_container_width=True
+                    ):
+
+                        wyniki = []
+
+                        for u in wybrane_ind:
+
+                            sila = sila_zawodnika(
+                                u["ovr"],
+                                "neutralny",
+                                "☀️"
                             )
+
+                            u2 = dict(u)
+
+                            u2["sila"] = sila
+                            u2["wynik_litera"] = None
+
+                            los = random.random()
+
+                            if los < 0.02:
+
+                                u2["wynik_litera"] = "D"
+                                u2["sila"] = -100
+
+                            elif los < 0.05:
+
+                                u2["wynik_litera"] = "U"
+                                u2["sila"] = -200
+
+                            elif los < 0.08:
+
+                                u2["wynik_litera"] = "W"
+                                u2["sila"] = -300
+
+                            wyniki.append(u2)
+
+
+                        wyniki.sort(
+                            key=lambda x: x["sila"],
+                            reverse=True
+                        )
+
+
+                        sklasyfikowani = [
+                            x for x in wyniki
+                            if not x["wynik_litera"]
+                        ]
+
+                        niesklasyfikowani = [
+                            x for x in wyniki
+                            if x["wynik_litera"]
+                        ]
+
+                        punkty = [3, 2, 1, 0]
+
+                        zdarzenia = []
+
+
+                        for i, u in enumerate(
+                            sklasyfikowani
+                        ):
+
+                            pkt = (
+                                punkty[i]
+                                if i < 4
+                                else 0
+                            )
+
+                            st.session_state.ind_points[
+                                u["nr"]
+                            ] += pkt
+
+                            st.session_state.ind_heats[
+                                u["nr"]
+                            ].append(
+                                str(pkt)
+                            )
+
+
+                        for u in niesklasyfikowani:
+
+                            st.session_state.ind_heats[
+                                u["nr"]
+                            ].append(
+                                u["wynik_litera"]
+                            )
+
+                            if u["wynik_litera"] == "D":
+
+                                zdarzenia.append(
+                                    f"💨 Defekt sprzętu: "
+                                    f"{u['nazwisko']}!"
+                                )
+
+                            elif u["wynik_litera"] == "U":
+
+                                zdarzenia.append(
+                                    f"💥 Upadek: "
+                                    f"{u['nazwisko']}!"
+                                )
+
+                            elif u["wynik_litera"] == "W":
+
+                                zdarzenia.append(
+                                    f"🚫 Wykluczenie: "
+                                    f"{u['nazwisko']}!"
+                                )
+
+
+                        szczegoly = []
+
+                        for i, u in enumerate(wyniki):
+
+                            if u["wynik_litera"]:
+
+                                zapis = u["wynik_litera"]
+
+                            else:
+
+                                index = (
+                                    sklasyfikowani.index(u)
+                                )
+
+                                zapis = str(
+                                    punkty[index]
+                                )
+
+                            szczegoly.append(
+                                f"{u['nazwisko']} "
+                                f"({KASKI[i]}) - "
+                                f"{zapis}"
+                            )
+
+
+                        komentarz = komentarz_biegu(
+                            [
+                                {
+                                    "nazwisko": u["nazwisko"],
+                                    "sila": u["sila"],
+                                    "druzyna": "ind"
+                                }
+                                for u in sklasyfikowani
+                            ],
+                            zdarzenia
+                        )
+
+
+                        st.session_state.ind_history.append({
+                            "bieg": nr_biegu,
+                            "wynik_biegu": "IND",
+                            "szczegoly": ", ".join(
+                                szczegoly
+                            ),
+                            "komentarz": komentarz
+                        })
+
+
+                        st.session_state.ind_current_heat += 1
+
+                        st.rerun()
+
+
+            # ------------------------------------------------
+            # PÓŁFINAŁY
+            # ------------------------------------------------
+
+            elif (
+                st.session_state.ind_current_heat == 20
+                and not st.session_state.ind_finished
+            ):
+
+                st.subheader(
+                    "🏆 Półfinały"
+                )
+
+                ranking = sorted(
+                    zawodnicy,
+                    key=lambda x: (
+                        st.session_state.ind_points.get(
+                            x["nr"],
+                            0
+                        )
+                    ),
+                    reverse=True
+                )
+
+                if len(ranking) >= 8:
+
+                    pol1 = ranking[:4]
+                    pol2 = ranking[4:8]
+
+                    st.markdown(
+                        "**Półfinał 1**"
+                    )
+
+                    for x in pol1:
+
+                        st.write(
+                            f"{x['nazwisko']} — "
+                            f"{st.session_state.ind_points[x['nr']]} pkt"
+                        )
+
+                    st.markdown(
+                        "**Półfinał 2**"
+                    )
+
+                    for x in pol2:
+
+                        st.write(
+                            f"{x['nazwisko']} — "
+                            f"{st.session_state.ind_points[x['nr']]} pkt"
+                        )
+
+
+                    if st.button(
+                        "🏁 Jedź półfinały",
+                        use_container_width=True
+                    ):
+
+                        awans = []
+
+                        for grupa in [pol1, pol2]:
+
+                            wyniki_pol = []
+
+                            for x in grupa:
+
+                                sila = sila_zawodnika(
+                                    x["ovr"],
+                                    "neutralny",
+                                    ""
+                                )
+
+                                wyniki_pol.append(
+                                    (
+                                        x,
+                                        sila
+                                    )
+                                )
+
+                            wyniki_pol.sort(
+                                key=lambda x: x[1],
+                                reverse=True
+                            )
+
+                            awans.extend([
+                                x[0]
+                                for x in wyniki_pol[:2]
+                            ])
+
+
+                        st.session_state.ind_finalists = (
+                            awans
+                        )
+
+                        st.session_state.ind_current_heat = 21
+
+                        st.rerun()
+
+
+            # ------------------------------------------------
+            # FINAŁ
+            # ------------------------------------------------
+
+            elif (
+                st.session_state.ind_current_heat == 21
+                and not st.session_state.ind_finished
+            ):
+
+                finalisci = st.session_state.get(
+                    "ind_finalists",
+                    []
+                )
+
+                st.subheader(
+                    "🏆 WIELKI FINAŁ"
+                )
+
+                if len(finalisci) >= 4:
+
+                    for x in finalisci:
+
+                        st.write(
+                            f"{x['nazwisko']} — "
+                            f"{x['kraj']} — "
+                            f"OVR {x['ovr']}"
+                        )
+
+
+                    if st.button(
+                        "🏁 Jedź Finał",
+                        use_container_width=True
+                    ):
+
+                        final_wyniki = []
+
+                        for x in finalisci:
+
+                            sila = sila_zawodnika(
+                                x["ovr"],
+                                "neutralny",
+                                ""
+                            )
+
+                            final_wyniki.append(
+                                (
+                                    x,
+                                    sila
+                                )
+                            )
+
+                        final_wyniki.sort(
+                            key=lambda x: x[1],
+                            reverse=True
+                        )
+
+
+                        for i, element in enumerate(
+                            final_wyniki
+                        ):
+
+                            zawodnik = element[0]
+
+                            punkty_finalu = [
+                                6, 4, 2, 0
+                            ][i]
+
+                            st.session_state.ind_points[
+                                zawodnik["nr"]
+                            ] += punkty_finalu
+
+
+                        st.session_state.ind_final_result = (
+                            final_wyniki
+                        )
+
+                        st.session_state.ind_finished = True
+
+                        st.rerun()
+
+
+            # ------------------------------------------------
+            # KONIEC
+            # ------------------------------------------------
+
+            if st.session_state.ind_finished:
+
+                st.success(
+                    f"🏆 KONIEC {nazwa_turnieju}!"
+                )
+
+                final = st.session_state.get(
+                    "ind_final_result",
+                    []
+                )
+
+                for i, element in enumerate(final):
+
+                    zawodnik = element[0]
+
+                    medal = [
+                        "🥇",
+                        "🥈",
+                        "🥉",
+                        "4️⃣"
+                    ][i]
+
+                    st.markdown(
+                        f"### {medal} "
+                        f"{zawodnik['nazwisko']}"
+                    )
+
+                    st.write(
+                        f"{zawodnik['kraj']} | "
+                        f"OVR {zawodnik['ovr']} | "
+                        f"Łącznie: "
+                        f"{st.session_state.ind_points[zawodnik['nr']]} pkt"
+                    )
+
+
+            # ------------------------------------------------
+            # HISTORIA
+            # ------------------------------------------------
+
+            if st.session_state.ind_history:
+
+                st.divider()
+
+                st.subheader(
+                    "📜 Historia biegów"
+                )
+
+                for hist in reversed(
+                    st.session_state.ind_history
+                ):
+
+                    with st.expander(
+                        f"Bieg {hist['bieg']}"
+                    ):
+
+                        st.markdown(
+                            f"**Kolejność na mecie:** "
+                            f"{hist['szczegoly']}"
+                        )
+
+                        st.info(
+                            f"🎙️ {hist['komentarz']}"
+                        )
+
+
+    # ========================================================
+    # TABELA INDYWIDUALNA
+    # ========================================================
+
+    with tab_ind_tabela:
+
+        st.header(
+            f"📊 Klasyfikacja — {nazwa_turnieju}"
+        )
+
+        zawodnicy = zawodnicy_ind()
+
+        dane = []
+
+        for x in zawodnicy:
+
+            nr = x["nr"]
+
+            dane.append({
+                "Miejsce": 0,
+                "Nr": nr,
+                "Zawodnik": x["nazwisko"],
+                "Kraj": x["kraj"],
+                "U24": "TAK" if x["u24"] else "NIE",
+                "OVR": x["ovr"],
+                "Pkt": st.session_state.ind_points.get(
+                    nr,
+                    0
+                ),
+                "Biegi": ", ".join(
+                    st.session_state.ind_heats.get(
+                        nr,
+                        []
+                    )
+                ),
+                "Starty": len(
+                    st.session_state.ind_heats.get(
+                        nr,
+                        []
+                    )
+                )
+            })
+
+
+        df = pd.DataFrame(dane)
+
+        if not df.empty:
+
+            df = df.sort_values(
+                by=["Pkt", "OVR"],
+                ascending=[False, False]
+            ).reset_index(drop=True)
+
+            df["Miejsce"] = range(
+                1,
+                len(df) + 1
+            )
+
+            st.dataframe(
+                df,
+                hide_index=True,
+                use_container_width=True
+            )
+
+
+    # ========================================================
+    # RAPORT ZAWODÓW INDYWIDUALNYCH
+    # ========================================================
+
+    st.divider()
+
+    st.subheader(
+        "📄 Raport zawodów indywidualnych"
+    )
+
+    raport_ind = []
+
+    raport_ind.append(
+        "========================================"
+    )
+
+    raport_ind.append(
+        f"🏆 {nazwa_turnieju}"
+    )
+
+    raport_ind.append(
+        "========================================"
+    )
+
+    raport_ind.append("")
+
+    raport_ind.append(
+        "----------- BIEGI -----------"
+    )
+
+    for hist in st.session_state.ind_history:
+
+        raport_ind.append(
+            f"Bieg {hist['bieg']}"
+        )
+
+        raport_ind.append(
+            f"Kolejność na mecie: "
+            f"{hist['szczegoly']}"
+        )
+
+        raport_ind.append(
+            f"Komentarz: {hist['komentarz']}"
+        )
+
+        raport_ind.append("")
+
+
+    raport_ind.append(
+        "----------- KLASYFIKACJA -----------"
+    )
+
+    zawodnicy = zawodnicy_ind()
+
+    ranking = sorted(
+        zawodnicy,
+        key=lambda x: (
+            st.session_state.ind_points.get(
+                x["nr"],
+                0
+            )
+        ),
+        reverse=True
+    )
+
+    for miejsce, x in enumerate(
+        ranking,
+        start=1
+    ):
+
+        raport_ind.append(
+            f"{miejsce}. "
+            f"{x['nazwisko']} | "
+            f"{x['kraj']} | "
+            f"OVR {x['ovr']} | "
+            f"{st.session_state.ind_points.get(x['nr'], 0)} pkt | "
+            f"Biegi: "
+            f"{', '.join(map(str, st.session_state.ind_heats.get(x['nr'], [])))}"
+        )
+
+
+    raport_ind_text = "\n".join(
+        raport_ind
+    )
+
+    st.download_button(
+        "📥 Pobierz raport zawodów TXT",
+        raport_ind_text,
+        file_name=f"raport_{nazwa_turnieju}.txt",
+        mime="text/plain",
+        use_container_width=True
+    )
+
+    st.text_area(
+        "📋 Cały raport do skopiowania",
+        raport_ind_text,
+        height=400
+    )
