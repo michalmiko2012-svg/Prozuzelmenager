@@ -90,77 +90,152 @@ program_zawodow = [
     {
         "bieg": 1,
         "A": 1, "B": 9, "C": 3, "D": 11,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 2,
         "A": 6, "B": 14, "C": 7, "D": 15,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 3,
         "A": 10, "B": 2, "C": 12, "D": 4,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 4,
         "A": 13, "B": 5, "C": 14, "D": 6,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 5,
         "A": 3, "B": 9, "C": 4, "D": 10,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 6,
         "A": 11, "B": 1, "C": 12, "D": 7,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 7,
         "A": 2, "B": 13, "C": 5, "D": 15,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 8,
         "A": 10, "B": 4, "C": 11, "D": 6,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 9,
         "A": 1, "B": 9, "C": 2, "D": 12,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 10,
         "A": 14, "B": 3, "C": 13, "D": 5,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 11,
         "A": 4, "B": 13, "C": 1, "D": 9,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 12,
         "A": 15, "B": 7, "C": 10, "D": 3,
-        "kaski": {"A": "⚪", "B": "🔴", "C": "🟡", "D": "🔵"}
+        "kaski": {
+            "A": "⚪",
+            "B": "🔴",
+            "C": "🟡",
+            "D": "🔵"
+        }
     },
     {
         "bieg": 13,
         "A": 5, "B": 11, "C": 2, "D": 12,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 14,
         "A": 3, "B": 11, "C": 4, "D": 12,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     },
     {
         "bieg": 15,
         "A": 1, "B": 9, "C": 2, "D": 10,
-        "kaski": {"A": "🔴", "B": "⚪", "C": "🔵", "D": "🟡"}
+        "kaski": {
+            "A": "🔴",
+            "B": "⚪",
+            "C": "🔵",
+            "D": "🟡"
+        }
     }
 ]
 
@@ -800,7 +875,9 @@ if tryb == "🏟️ Mecz ligowy":
 
     with tab_taktyka:
 
-        st.title("🛠️ Ustawienia Taktyczne Menedżerów")
+        st.title(
+            "🛠️ Ustawienia Taktyczne Menedżerów"
+        )
 
         col1, col2 = st.columns(2)
 
@@ -1288,7 +1365,11 @@ if tryb == "🏟️ Mecz ligowy":
                         )
                         st.stop()
 
-                    def format_zawodnika(x, sklad=sklad, ovr=ovr):
+                    def format_zawodnika(
+                        x,
+                        sklad=sklad,
+                        ovr=ovr
+                    ):
                         return (
                             f"Nr {x} - "
                             f"{sklad[x]} "
@@ -1717,13 +1798,16 @@ if tryb == "🏟️ Mecz ligowy":
                     ) if biegi else "-",
                     "Starty": len(biegi),
                     "Zwykłe": st.session_state.normal_starts_count.get(
-                        nr, 0
+                        nr,
+                        0
                     ),
                     "RT": st.session_state.rt_count.get(
-                        nr, 0
+                        nr,
+                        0
                     ),
                     "Z/Z": st.session_state.zz_count.get(
-                        nr, 0
+                        nr,
+                        0
                     )
                 })
 
@@ -2384,6 +2468,7 @@ else:
         "🌍 Speedway World Cup"
     )
 
+
     # --------------------------------------------------------
     # POGODA SWC
     # --------------------------------------------------------
@@ -2418,64 +2503,48 @@ else:
         st.session_state.swc_pogoda = swc_pogoda
 
 
-# ========================================================
-# NAZWY REPREZENTACJI SWC
-# ========================================================
+    # ========================================================
+    # NAZWY REPREZENTACJI SWC
+    # ========================================================
 
-if "swc_reprezentacje" not in st.session_state:
-    st.session_state.swc_reprezentacje = {
-        1: "",
-        2: "",
-        3: "",
-        4: ""
-    }
+    if "swc_reprezentacje" not in st.session_state:
+        st.session_state.swc_reprezentacje = {
+            1: "",
+            2: "",
+            3: "",
+            4: ""
+        }
 
-st.subheader("🌍 Reprezentacje")
 
-rep_cols = st.columns(4)
+    # Jedyny blok do wpisywania nazw państw.
+    # Nie ma tutaj już swc_rep_name ani swc_country_name.
 
-for rep in range(1, 5):
-
-    with rep_cols[rep - 1]:
-
-        wartosc = st.text_input(
-            f"Reprezentacja {rep}",
-            value=st.session_state.swc_reprezentacje.get(rep, ""),
-            key=f"swc_country_name_{rep}",
-            placeholder="Wpisz nazwę dowolnego państwa"
-        )
-
-        st.session_state.swc_reprezentacje[rep] = wartosc.strip()
-    # --------------------------------------------------------
-    # NAZWY
-    # --------------------------------------------------------
+    st.subheader(
+        "🌍 Reprezentacje"
+    )
 
     rep_cols = st.columns(4)
+
 
     for rep in range(1, 5):
 
         with rep_cols[rep - 1]:
 
-            rep_key = f"swc_rep_name_{rep}"
-
-            if rep_key not in st.session_state:
-
-                st.session_state[rep_key] = (
-                    st.session_state.swc_reprezentacje[rep]
-                )
-
             st.text_input(
                 f"Reprezentacja {rep}",
-                key=rep_key
+                key=f"swc_panstwo_{rep}",
+                placeholder="Wpisz dowolne państwo"
             )
 
             st.session_state.swc_reprezentacje[rep] = (
-                st.session_state[rep_key]
+                st.session_state[
+                    f"swc_panstwo_{rep}"
+                ].strip()
             )
 
 
     # --------------------------------------------------------
-    # TABY
+    # TABY SWC
     # --------------------------------------------------------
 
     swc_kadra, swc_mecz, swc_tabela = st.tabs([
@@ -2502,8 +2571,14 @@ for rep in range(1, 5):
 
         for rep in range(1, 5):
 
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
+
+
             with st.expander(
-                st.session_state.swc_reprezentacje[rep],
+                nazwa_rep,
                 expanded=True
             ):
 
@@ -2524,6 +2599,7 @@ for rep in range(1, 5):
                         [3, 1]
                     )
 
+
                     with c1:
 
                         st.text_input(
@@ -2531,6 +2607,7 @@ for rep in range(1, 5):
                             key=f"swc_name_{rep}_{nr}",
                             placeholder="np. Bartosz Zmarzlik"
                         )
+
 
                     with c2:
 
@@ -2568,14 +2645,21 @@ for rep in range(1, 5):
             "📊 Aktualny wynik"
         )
 
+
         wynik_cols = st.columns(4)
 
+
         for rep in range(1, 5):
+
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
 
             with wynik_cols[rep - 1]:
 
                 st.metric(
-                    st.session_state.swc_reprezentacje[rep],
+                    nazwa_rep,
                     st.session_state.swc_score[rep]
                 )
 
@@ -2589,7 +2673,8 @@ for rep in range(1, 5):
 
         if st.button(
             "🔄 Resetuj zawody SWC",
-            use_container_width=True
+            use_container_width=True,
+            key="swc_reset_zawodow"
         ):
 
             reset_swc()
@@ -2601,6 +2686,7 @@ for rep in range(1, 5):
         # ----------------------------------------------------
 
         brak = []
+
 
         for rep in range(1, 5):
 
@@ -2615,7 +2701,7 @@ for rep in range(1, 5):
 
                     brak.append(
                         (
-                            st.session_state.swc_reprezentacje[rep],
+                            rep,
                             nr
                         )
                     )
@@ -2643,6 +2729,7 @@ for rep in range(1, 5):
                 st.session_state.swc_heat + 1
             )
 
+
             program = (
                 program_swc[
                     st.session_state.swc_heat
@@ -2652,15 +2739,6 @@ for rep in range(1, 5):
 
             st.subheader(
                 f"🚀 Bieg {nr_biegu} / 20"
-            )
-
-
-            # -----------------------------------------------
-            # PRZEWAGA
-            # -----------------------------------------------
-
-            lider = max(
-                st.session_state.swc_score.values()
             )
 
 
@@ -2677,9 +2755,11 @@ for rep in range(1, 5):
 
                 prog_nr = program[rep]
 
+
                 klucz_prog = (
                     f"{rep}_{prog_nr}"
                 )
+
 
                 prog_starty = (
                     st.session_state.swc_normal_starts.get(
@@ -2694,16 +2774,14 @@ for rep in range(1, 5):
                 )
 
 
-                # -------------------------------------------
-                # DOZWOLONE OPCJE
-                # -------------------------------------------
-
                 opcje = []
-
                 opis_opcji = {}
 
 
-                # Programowy zawodnik
+                # -------------------------------------------
+                # ZAWODNIK PROGRAMOWY
+                # -------------------------------------------
+
                 if prog_starty < 6:
 
                     opcje.append(
@@ -2715,13 +2793,20 @@ for rep in range(1, 5):
                     )
 
 
-                # Pozostali podstawowi
+                # -------------------------------------------
+                # INNI PODSTAWOWI
+                # -------------------------------------------
+
                 for nr in range(1, 5):
 
                     if nr == prog_nr:
                         continue
 
-                    klucz = f"{rep}_{nr}"
+
+                    klucz = (
+                        f"{rep}_{nr}"
+                    )
+
 
                     starty = (
                         st.session_state.swc_normal_starts.get(
@@ -2734,6 +2819,7 @@ for rep in range(1, 5):
                             0
                         )
                     )
+
 
                     if starty < 6:
 
@@ -2748,8 +2834,14 @@ for rep in range(1, 5):
                             )
 
 
-                # Rezerwowy nr 5
-                klucz_rez = f"{rep}_5"
+                # -------------------------------------------
+                # REZERWOWY NR 5
+                # -------------------------------------------
+
+                klucz_rez = (
+                    f"{rep}_5"
+                )
+
 
                 starty_rez = (
                     st.session_state.swc_normal_starts.get(
@@ -2763,9 +2855,12 @@ for rep in range(1, 5):
                     )
                 )
 
+
                 if starty_rez < 6:
 
-                    opcje.append(5)
+                    opcje.append(
+                        5
+                    )
 
                     opis_opcji[5] = (
                         "REZERWOWY"
@@ -2782,15 +2877,18 @@ for rep in range(1, 5):
                     if r != rep
                 ]
 
+
                 najblizszy_wynik = min(
                     st.session_state.swc_score[r]
                     for r in pozostale_repy
                 )
 
+
                 roznica = (
                     st.session_state.swc_score[rep]
                     - najblizszy_wynik
                 )
+
 
                 if (
                     nr_biegu >= 3
@@ -2800,7 +2898,10 @@ for rep in range(1, 5):
 
                     for nr in range(1, 5):
 
-                        klucz = f"{rep}_{nr}"
+                        klucz = (
+                            f"{rep}_{nr}"
+                        )
+
 
                         rt_count = (
                             st.session_state.swc_rt.get(
@@ -2808,6 +2909,7 @@ for rep in range(1, 5):
                                 0
                             )
                         )
+
 
                         total = (
                             st.session_state.swc_normal_starts.get(
@@ -2817,6 +2919,7 @@ for rep in range(1, 5):
                             + rt_count
                         )
 
+
                         if (
                             rt_count < 1
                             and total < 6
@@ -2824,27 +2927,33 @@ for rep in range(1, 5):
 
                             if nr not in opcje:
 
-                                opcje.append(nr)
+                                opcje.append(
+                                    nr
+                                )
 
                                 opis_opcji[nr] = (
                                     "RT"
                                 )
 
 
-                # -------------------------------------------
-                # USUNIĘCIE DUPLIKATÓW
-                # -------------------------------------------
-
                 opcje = list(
-                    dict.fromkeys(opcje)
+                    dict.fromkeys(
+                        opcje
+                    )
                 )
 
 
                 with cols[rep - 1]:
 
+                    nazwa_rep = (
+                        st.session_state.swc_reprezentacje[rep]
+                        or f"Reprezentacja {rep}"
+                    )
+
+
                     st.markdown(
                         f"**{KASKI[rep - 1]} "
-                        f"{st.session_state.swc_reprezentacje[rep]}**"
+                        f"{nazwa_rep}**"
                     )
 
 
@@ -2901,6 +3010,7 @@ for rep in range(1, 5):
                         wybor == 5
                     )
 
+
                     czy_rt = (
                         wybor != prog_nr
                         and not czy_rezerwa
@@ -2932,9 +3042,9 @@ for rep in range(1, 5):
                     })
 
 
-            # -----------------------------------------------
+            # ------------------------------------------------
             # START BIEGU
-            # -----------------------------------------------
+            # ------------------------------------------------
 
             if st.button(
                 "🏁 Jedź Bieg",
@@ -2943,18 +3053,20 @@ for rep in range(1, 5):
             ):
 
                 uczestnicy = []
+
                 zdarzenia = []
 
 
-                # -------------------------------------------
-                # WALIDACJA STARTÓW
-                # -------------------------------------------
+                # --------------------------------------------
+                # WALIDACJA LIMITU
+                # --------------------------------------------
 
                 for u in wybrani:
 
                     klucz = (
                         f"{u['rep']}_{u['nr']}"
                     )
+
 
                     normalne = (
                         st.session_state.swc_normal_starts.get(
@@ -2963,6 +3075,7 @@ for rep in range(1, 5):
                         )
                     )
 
+
                     rt = (
                         st.session_state.swc_rt.get(
                             klucz,
@@ -2970,10 +3083,12 @@ for rep in range(1, 5):
                         )
                     )
 
+
                     razem = (
                         normalne
                         + rt
                     )
+
 
                     if razem >= 6:
 
@@ -2985,15 +3100,16 @@ for rep in range(1, 5):
                         st.stop()
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # RODZAJ STARTU
-                # -------------------------------------------
+                # --------------------------------------------
 
                 for u in wybrani:
 
                     klucz = (
                         f"{u['rep']}_{u['nr']}"
                     )
+
 
                     if u["czy_rt"]:
 
@@ -3008,9 +3124,9 @@ for rep in range(1, 5):
                         ] += 1
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # SYMULACJA
-                # -------------------------------------------
+                # --------------------------------------------
 
                 for u in wybrani:
 
@@ -3023,6 +3139,7 @@ for rep in range(1, 5):
 
                     if u["czy_rt"]:
                         sila += 1.0
+
 
                     if u["czy_rezerwa"]:
                         sila += 0.2
@@ -3044,6 +3161,7 @@ for rep in range(1, 5):
                             f"{u['nazwisko']}!"
                         )
 
+
                     elif los < 0.05:
 
                         u["wynik_litera"] = "U"
@@ -3053,6 +3171,7 @@ for rep in range(1, 5):
                             f"💥 Upadek: "
                             f"{u['nazwisko']}!"
                         )
+
 
                     elif los < 0.08:
 
@@ -3064,17 +3183,20 @@ for rep in range(1, 5):
                             f"{u['nazwisko']}!"
                         )
 
+
                     else:
 
                         u["wynik_litera"] = None
 
 
-                    uczestnicy.append(u)
+                    uczestnicy.append(
+                        u
+                    )
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # KLASYFIKACJA
-                # -------------------------------------------
+                # --------------------------------------------
 
                 uczestnicy.sort(
                     key=lambda x: x["sila"],
@@ -3087,6 +3209,7 @@ for rep in range(1, 5):
                     for u in uczestnicy
                     if not u["wynik_litera"]
                 ]
+
 
                 niesklasyfikowani = [
                     u
@@ -3111,9 +3234,9 @@ for rep in range(1, 5):
                 }
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # PUNKTY
-                # -------------------------------------------
+                # --------------------------------------------
 
                 for i, u in enumerate(
                     sklasyfikowani
@@ -3125,6 +3248,7 @@ for rep in range(1, 5):
                         else 0
                     )
 
+
                     wynik_reprezentacji[
                         u["rep"]
                     ] += pkt
@@ -3134,6 +3258,7 @@ for rep in range(1, 5):
                         f"{u['rep']}_{u['nr']}"
                     )
 
+
                     st.session_state.swc_heats[
                         klucz
                     ].append(
@@ -3141,15 +3266,16 @@ for rep in range(1, 5):
                     )
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # D/U/W
-                # -------------------------------------------
+                # --------------------------------------------
 
                 for u in niesklasyfikowani:
 
                     klucz = (
                         f"{u['rep']}_{u['nr']}"
                     )
+
 
                     st.session_state.swc_heats[
                         klucz
@@ -3158,9 +3284,9 @@ for rep in range(1, 5):
                     )
 
 
-                # -------------------------------------------
-                # DODANIE PUNKTÓW REPREZENTACJOM
-                # -------------------------------------------
+                # --------------------------------------------
+                # WYNIK REPREZENTACJI
+                # --------------------------------------------
 
                 for rep in range(1, 5):
 
@@ -3171,9 +3297,9 @@ for rep in range(1, 5):
                     ]
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # KOMENTARZ
-                # -------------------------------------------
+                # --------------------------------------------
 
                 uczestnicy_komentarz = []
 
@@ -3182,8 +3308,10 @@ for rep in range(1, 5):
                     uczestnicy_komentarz.append({
                         "nazwisko":
                             u["nazwisko"],
+
                         "sila":
                             u["sila"],
+
                         "druzyna":
                             u["rep"]
                     })
@@ -3195,11 +3323,12 @@ for rep in range(1, 5):
                 )
 
 
-                # -------------------------------------------
+                # --------------------------------------------
                 # HISTORIA
-                # -------------------------------------------
+                # --------------------------------------------
 
                 szczegoly = []
+
 
                 for u in uczestnicy:
 
@@ -3207,13 +3336,16 @@ for rep in range(1, 5):
                         f"{u['rep']}_{u['nr']}"
                     )
 
+
                     zapis = (
                         st.session_state.swc_heats[
                             klucz
                         ][-1]
                     )
 
+
                     status = ""
+
 
                     if u["czy_rt"]:
 
@@ -3232,6 +3364,7 @@ for rep in range(1, 5):
 
 
                 st.session_state.swc_history.append({
+
                     "bieg":
                         nr_biegu,
 
@@ -3276,7 +3409,7 @@ for rep in range(1, 5):
 
 
             # -----------------------------------------------
-            # REMIS O ZWYCIĘSTWO
+            # REMIS
             # -----------------------------------------------
 
             if (
@@ -3293,10 +3426,6 @@ for rep in range(1, 5):
 
                 st.warning(
                     "⚠️ Remis na pierwszym miejscu."
-                )
-
-                st.info(
-                    "Możesz rozstrzygnąć remis dodatkowym biegiem."
                 )
 
 
@@ -3319,16 +3448,18 @@ for rep in range(1, 5):
                             ""
                         )
 
+
                         if nazwa_a:
 
                             kand_a.append({
                                 "rep": rep_a,
                                 "nr": nr,
                                 "nazwisko": nazwa_a,
-                                "ovr": st.session_state.get(
-                                    f"swc_ovr_{rep_a}_{nr}",
-                                    60
-                                )
+                                "ovr":
+                                    st.session_state.get(
+                                        f"swc_ovr_{rep_a}_{nr}",
+                                        60
+                                    )
                             })
 
 
@@ -3337,16 +3468,18 @@ for rep in range(1, 5):
                             ""
                         )
 
+
                         if nazwa_b:
 
                             kand_b.append({
                                 "rep": rep_b,
                                 "nr": nr,
                                 "nazwisko": nazwa_b,
-                                "ovr": st.session_state.get(
-                                    f"swc_ovr_{rep_b}_{nr}",
-                                    60
-                                )
+                                "ovr":
+                                    st.session_state.get(
+                                        f"swc_ovr_{rep_b}_{nr}",
+                                        60
+                                    )
                             })
 
 
@@ -3360,6 +3493,7 @@ for rep in range(1, 5):
                                 swc_pogoda
                             )
                         )
+
 
                         zawodnik_b = max(
                             kand_b,
@@ -3376,6 +3510,7 @@ for rep in range(1, 5):
                             "neutralny",
                             swc_pogoda
                         )
+
 
                         sila_b = sila_zawodnika(
                             zawodnik_b["ovr"],
@@ -3394,6 +3529,7 @@ for rep in range(1, 5):
 
 
                         st.session_state.swc_winner = winner
+
                         st.session_state.swc_finished = True
 
                         st.rerun()
@@ -3407,7 +3543,10 @@ for rep in range(1, 5):
 
             else:
 
-                st.session_state.swc_winner = ranking[0]
+                st.session_state.swc_winner = (
+                    ranking[0]
+                )
+
                 st.session_state.swc_finished = True
 
 
@@ -3421,11 +3560,21 @@ for rep in range(1, 5):
                 "swc_winner"
             )
 
+
             if winner:
+
+                winner_name = (
+                    st.session_state.swc_reprezentacje[
+                        winner
+                    ]
+                    or
+                    f"Reprezentacja {winner}"
+                )
+
 
                 st.success(
                     f"🏆 ZWYCIĘZCA SWC: "
-                    f"{st.session_state.swc_reprezentacje[winner]}"
+                    f"{winner_name}"
                 )
 
 
@@ -3476,12 +3625,21 @@ for rep in range(1, 5):
 
         tabela_rep = []
 
+
         for rep in range(1, 5):
+
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
+
 
             tabela_rep.append({
                 "Miejsce": 0,
+
                 "Reprezentacja":
-                    st.session_state.swc_reprezentacje[rep],
+                    nazwa_rep,
+
                 "Pkt":
                     st.session_state.swc_score[rep]
             })
@@ -3490,6 +3648,7 @@ for rep in range(1, 5):
         df_rep = pd.DataFrame(
             tabela_rep
         )
+
 
         if not df_rep.empty:
 
@@ -3500,10 +3659,12 @@ for rep in range(1, 5):
                 drop=True
             )
 
+
             df_rep["Miejsce"] = range(
                 1,
                 len(df_rep) + 1
             )
+
 
             st.dataframe(
                 df_rep,
@@ -3524,12 +3685,19 @@ for rep in range(1, 5):
 
         for rep in range(1, 5):
 
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
+
+
             for nr in range(1, 6):
 
                 nazwa = st.session_state.get(
                     f"swc_name_{rep}_{nr}",
                     ""
                 )
+
 
                 if not nazwa:
                     continue
@@ -3550,6 +3718,7 @@ for rep in range(1, 5):
 
                 pkt = 0
 
+
                 for x in biegi:
 
                     if str(x).startswith("3"):
@@ -3565,7 +3734,7 @@ for rep in range(1, 5):
                 tabela_zawodnikow.append({
 
                     "Reprezentacja":
-                        st.session_state.swc_reprezentacje[rep],
+                        nazwa_rep,
 
                     "Nr":
                         nr,
@@ -3624,6 +3793,7 @@ for rep in range(1, 5):
                 drop=True
             )
 
+
             st.dataframe(
                 df_zaw,
                 hide_index=True,
@@ -3631,9 +3801,9 @@ for rep in range(1, 5):
             )
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # RAPORT SWC
-        # ----------------------------------------------------
+        # ====================================================
 
         st.divider()
 
@@ -3644,21 +3814,27 @@ for rep in range(1, 5):
 
         raport_swc = []
 
+
         raport_swc.append(
             "=========================================="
         )
+
 
         raport_swc.append(
             "🌍 SPEEDWAY WORLD CUP"
         )
 
+
         raport_swc.append(
             "=========================================="
         )
 
+
         raport_swc.append(
-            f"Pogoda: {st.session_state.get('swc_pogoda', swc_pogoda)}"
+            f"Pogoda: "
+            f"{st.session_state.get('swc_pogoda', swc_pogoda)}"
         )
+
 
         raport_swc.append("")
 
@@ -3681,14 +3857,21 @@ for rep in range(1, 5):
             start=1
         ):
 
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
+
+
             raport_swc.append(
                 f"{miejsce}. "
-                f"{st.session_state.swc_reprezentacje[rep]} — "
+                f"{nazwa_rep} — "
                 f"{st.session_state.swc_score[rep]} pkt"
             )
 
 
         raport_swc.append("")
+
 
         raport_swc.append(
             "----------- BIEG PO BIEGU -----------"
@@ -3702,15 +3885,18 @@ for rep in range(1, 5):
                 f"Wynik: {hist['wynik_biegu']}"
             )
 
+
             raport_swc.append(
                 f"Kolejność na mecie: "
                 f"{hist['szczegoly']}"
             )
 
+
             raport_swc.append(
                 f"Komentarz: "
                 f"{hist['komentarz']}"
             )
+
 
             raport_swc.append("")
 
@@ -3722,10 +3908,17 @@ for rep in range(1, 5):
 
         for rep in range(1, 5):
 
+            nazwa_rep = (
+                st.session_state.swc_reprezentacje[rep]
+                or f"Reprezentacja {rep}"
+            )
+
+
             raport_swc.append("")
 
+
             raport_swc.append(
-                st.session_state.swc_reprezentacje[rep]
+                nazwa_rep
             )
 
 
@@ -3736,6 +3929,7 @@ for rep in range(1, 5):
                     ""
                 )
 
+
                 if not nazwa:
                     continue
 
@@ -3743,6 +3937,7 @@ for rep in range(1, 5):
                 klucz = (
                     f"{rep}_{nr}"
                 )
+
 
                 biegi = (
                     st.session_state.swc_heats.get(
@@ -3753,6 +3948,7 @@ for rep in range(1, 5):
 
 
                 pkt = 0
+
 
                 for x in biegi:
 
@@ -3769,7 +3965,8 @@ for rep in range(1, 5):
                 raport_swc.append(
                     f"Nr {nr} | "
                     f"{nazwa} | "
-                    f"OVR {st.session_state.get(f'swc_ovr_{rep}_{nr}', 60)} | "
+                    f"OVR "
+                    f"{st.session_state.get(f'swc_ovr_{rep}_{nr}', 60)} | "
                     f"{pkt} pkt | "
                     f"Biegi: "
                     f"{', '.join(map(str, biegi)) if biegi else '-'} | "
