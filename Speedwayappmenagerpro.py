@@ -2835,61 +2835,79 @@ if tryb == "🏟️ Mecz ligowy":
             )
 
 
-        # ----------------------------------------------------
-        # RAPORT MECZU
-        # ----------------------------------------------------
+# ----------------------------------------------------
+# RAPORT MECZU
+# ----------------------------------------------------
 
-        st.divider()
+st.divider()
 
-        st.subheader(
-            "📄 Raport meczu"
-        )
-
-
-        raport = []
+st.subheader(
+    "📄 Raport meczu"
+)
 
 
-        raport.append(
-            "=========================================="
-        )
+def generuj_raport_meczu():
 
-        raport.append(
-            "🏁 RAPORT MECZU ŻUŻLOWEGO"
-        )
+    raport = []
 
-        raport.append(
-            "=========================================="
-        )
+    raport.append(
+        "=========================================="
+    )
 
-        raport.append(
-            f"Gospodarz: {wybrany_gospodarz}"
-        )
+    raport.append(
+        "🏁 RAPORT MECZU ŻUŻLOWEGO"
+    )
 
-        raport.append(
-            f"Gość: {wybrany_gosc}"
-        )
+    raport.append(
+        "=========================================="
+    )
 
-        raport.append(
-            f"Pogoda: {wybrana_pogoda}"
-        )
+    raport.append(
+        f"Gospodarz: {wybrany_gospodarz}"
+    )
 
-        raport.append("")
+    raport.append(
+        f"Gość: {wybrany_gosc}"
+    )
+
+    raport.append(
+        f"Pogoda: {wybrana_pogoda}"
+    )
+
+    raport.append("")
+
+    # ----------------------------------------
+    # AKTUALNY WYNIK
+    # ----------------------------------------
+
+    raport.append(
+        "----------- AKTUALNY WYNIK -----------"
+    )
+
+    raport.append(
+        f"{wybrany_gospodarz} "
+        f"{st.session_state.score_gosp}:"
+        f"{st.session_state.score_gosc} "
+        f"{wybrany_gosc}"
+    )
+
+    raport.append(
+        f"Rozegrane biegi: "
+        f"{st.session_state.current_heat}/15"
+    )
+
+    raport.append("")
+
+    # ----------------------------------------
+    # BIEG PO BIEGU
+    # ----------------------------------------
+
+    raport.append(
+        "----------- BIEG PO BIEGU -----------"
+    )
 
 
-        raport.append(
-            f"Aktualny wynik: "
-            f"{st.session_state.score_gosp}:"
-            f"{st.session_state.score_gosc}"
-        )
-
-
-        raport.append("")
-
-
-        raport.append(
-            "----------- BIEGI -----------"
-        )
-
+    if st.session_state.match_history:
 
         for hist in st.session_state.match_history:
 
@@ -2910,98 +2928,293 @@ if tryb == "🏟️ Mecz ligowy":
 
             raport.append("")
 
+    else:
 
         raport.append(
-            "----------- PUNKTY -----------"
+            "Nie rozegrano jeszcze żadnego biegu."
         )
 
+        raport.append("")
 
-        for sklad, gospodarze in [
 
-            (
-                st.session_state.sklad_gospodarze,
-                True
-            ),
+    # ----------------------------------------
+    # TABELA ZAWODNIKÓW
+    # ----------------------------------------
 
-            (
-                st.session_state.sklad_goscie,
-                False
+    raport.append(
+        "----------- PUNKTY ZAWODNIKÓW -----------"
+    )
+
+
+    def dodaj_zawodnikow_do_raportu(
+        sklad,
+        gospodarze
+    ):
+
+        for nr, zawodnik in sklad.items():
+
+            if not zawodnik:
+                continue
+
+
+            biegi = (
+                st.session_state.rider_heats.get(
+                    nr,
+                    []
+                )
             )
 
-        ]:
 
-            for nr, zawodnik in sklad.items():
-
-                if not zawodnik:
-
-                    continue
+            pkt = 0
 
 
-                biegi = (
-                    st.session_state.rider_heats.get(
-                        nr,
-                        []
-                    )
+            for wynik in biegi:
+
+                tekst = str(wynik)
+
+                if tekst.startswith("3"):
+                    pkt += 3
+
+                elif tekst.startswith("2"):
+                    pkt += 2
+
+                elif tekst.startswith("1"):
+                    pkt += 1
+
+
+            bonus = (
+                st.session_state.rider_bonuses.get(
+                    nr,
+                    0
+                )
+            )
+
+
+            starty = (
+                st.session_state.starts_count.get(
+                    nr,
+                    0
+                )
+            )
+
+
+            zwykle = (
+                st.session_state.normal_starts_count.get(
+                    nr,
+                    0
+                )
+            )
+
+
+            rt = (
+                st.session_state.rt_count.get(
+                    nr,
+                    0
+                )
+            )
+
+
+            zz = (
+                st.session_state.zz_count.get(
+                    nr,
+                    0
+                )
+            )
+
+
+            raport.append(
+                f"Nr {nr} | "
+                f"{zawodnik} | "
+                f"OVR {pobierz_ovr(nr, gospodarze)} | "
+                f"Pkt: {pkt} | "
+                f"Bonusy: {bonus} | "
+                f"Razem: {pkt}+{bonus} | "
+                f"Starty: {starty} | "
+                f"Zwykłe: {zwykle} | "
+                f"RT: {rt} | "
+                f"Z/Z: {zz} | "
+                f"Biegi: "
+                f"{', '.join(map(str, biegi)) if biegi else '-'}"
+            )
+
+
+    raport.append(
+        f"🏠 {wybrany_gospodarz}"
+    )
+
+
+    dodaj_zawodnikow_do_raportu(
+        st.session_state.sklad_gospodarze,
+        True
+    )
+
+
+    raport.append("")
+
+
+    raport.append(
+        f"✈️ {wybrany_gosc}"
+    )
+
+
+    dodaj_zawodnikow_do_raportu(
+        st.session_state.sklad_goscie,
+        False
+    )
+
+
+    raport.append("")
+
+
+    # ----------------------------------------
+    # KONTUZJE
+    # ----------------------------------------
+
+    raport.append(
+        "----------- KONTUZJE -----------"
+    )
+
+
+    if st.session_state.kontuzjowani:
+
+        znaleziono = False
+
+
+        for nr in sorted(
+            st.session_state.kontuzjowani
+        ):
+
+            if nr <= 8:
+
+                nazwa = pobierz_zawodnika(
+                    nr,
+                    True
+                )
+
+            else:
+
+                nazwa = pobierz_zawodnika(
+                    nr,
+                    False
                 )
 
 
-                pkt = 0
-
-
-                for x in biegi:
-
-                    tekst = str(x)
-
-                    if tekst.startswith("3"):
-                        pkt += 3
-
-                    elif tekst.startswith("2"):
-                        pkt += 2
-
-                    elif tekst.startswith("1"):
-                        pkt += 1
-
-
-                bonus = (
-                    st.session_state.rider_bonuses.get(
-                        nr,
-                        0
-                    )
-                )
-
+            if nazwa:
 
                 raport.append(
-                    f"Nr {nr} | "
-                    f"{zawodnik} | "
-                    f"OVR "
-                    f"{pobierz_ovr(nr, gospodarze)} | "
-                    f"{pkt}+{bonus} | "
-                    f"Biegi: "
-                    f"{', '.join(map(str, biegi)) if biegi else '-'}"
+                    f"Nr {nr} | {nazwa}"
                 )
 
+                znaleziono = True
 
-        raport_text = "\n".join(
-            raport
+
+        if not znaleziono:
+
+            raport.append(
+                "Brak danych o kontuzjowanych."
+            )
+
+    else:
+
+        raport.append(
+            "Brak kontuzji."
         )
 
 
-        st.download_button(
-            "📥 Pobierz raport meczu TXT",
-            raport_text,
-            file_name="raport_meczu.txt",
-            mime="text/plain",
-            use_container_width=True,
-            key="download_raport_liga"
+    raport.append("")
+
+
+    # ----------------------------------------
+    # Z/Z
+    # ----------------------------------------
+
+    raport.append(
+        "----------- Z/Z -----------"
+    )
+
+
+    if st.session_state.zz_gosp is not None:
+
+        nr = st.session_state.zz_gosp
+
+        raport.append(
+            f"{wybrany_gospodarz}: "
+            f"Nr {nr} - "
+            f"{pobierz_zawodnika(nr, True)}"
+        )
+
+    else:
+
+        raport.append(
+            f"{wybrany_gospodarz}: brak Z/Z"
         )
 
 
-        st.text_area(
-            "📋 Cały raport do skopiowania",
-            raport_text,
-            height=350,
-            key="raport_liga_text"
+    if st.session_state.zz_gosc is not None:
+
+        nr = st.session_state.zz_gosc
+
+        raport.append(
+            f"{wybrany_gosc}: "
+            f"Nr {nr} - "
+            f"{pobierz_zawodnika(nr, False)}"
         )
+
+    else:
+
+        raport.append(
+            f"{wybrany_gosc}: brak Z/Z"
+        )
+
+
+    raport.append("")
+
+
+    # ----------------------------------------
+    # KONIEC RAPORTU
+    # ----------------------------------------
+
+    raport.append(
+        "=========================================="
+    )
+
+    raport.append(
+        "KONIEC RAPORTU"
+    )
+
+    raport.append(
+        "=========================================="
+    )
+
+
+    return "\n".join(
+        raport
+    )
+
+
+# ========================================
+# GENEROWANIE RAPORTU NA ŻYWO
+# ========================================
+
+raport_text = generuj_raport_meczu()
+
+
+st.download_button(
+    "📥 Pobierz raport meczu TXT",
+    raport_text,
+    file_name="raport_meczu.txt",
+    mime="text/plain",
+    use_container_width=True,
+    key="download_raport_liga"
+)
+
+
+st.text_area(
+    "📋 Cały raport do skopiowania",
+    raport_text,
+    height=500,
+    key="raport_liga_text"
+)
 
 
 # ============================================================
