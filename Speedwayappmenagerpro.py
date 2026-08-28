@@ -3209,9 +3209,12 @@ if tryb == "🏟️ Mecz ligowy":
     )
 
 
+    # Aktualizujemy zawartość pola przed jego utworzeniem.
+    # Dzięki temu raport nie pozostaje na wartości z pierwszego renderu.
+    st.session_state["raport_liga_text"] = raport_text
+
     st.text_area(
         "📋 Cały raport do skopiowania",
-        raport_text,
         height=500,
         key="raport_liga_text"
     )
